@@ -1,0 +1,209 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║      ✅ ATUALIZAÇÃO: INVESTIMENTOS AGORA NO GRÁFICO DETALHADO!             ║
+║                                                                              ║
+║         Agora você vê tudo: Despesas + Investimentos = Saído Total       ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+🎯 O QUE VOCÊ OBSERVOU:
+═══════════════════════════════════════════════════════════════════════════════
+
+"Faltou inserir os investimentos nesse gráfico, julgo importante porque 
+eles também saem do meu salário"
+
+✅ CORRETO! E JÁ FOI FEITO!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+💰 NOVO NO GRÁFICO DETALHADO:
+═══════════════════════════════════════════════════════════════════════════════
+
+Agora o gráfico mostra:
+
+DESPESAS NORMAIS (como antes):
+├─ Alimentação
+├─ Moradia
+├─ Transporte
+├─ Lazer
+├─ Saúde
+├─ Educação
+└─ Outros
+
+MAIS NOVO:
+└─ 💰 Investimentos ← ADICIONADO!
+
+VISUAL:
+├─ Cores diferentes para cada categoria
+├─ Investimentos em TURQUESA (cor especial)
+├─ Mostra junto com despesas para comparação
+└─ Todos os 6 meses lado a lado
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📊 COMO FICA O GRÁFICO:
+
+Exemplo (últimos 6 meses):
+
+          Alimentação  Moradia  Transporte  Lazer  Saúde  Investimentos
+Aug/25    ████         ██████   ███         ██     -      ██
+Set/25    ████         ██████   ███         ██     █      ███
+Out/25    ████         ██████   ███         ██     -      █████
+Nov/25    ████         ██████   ███         ███    -      ██
+Dez/25    █████        ██████   ███         ████   █      █
+Jan/26    ████         ██████   ███         ██     -      ███
+
+Cada cor = uma categoria diferente
+Investimentos em destaque com cor turquesa!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📋 NA TABELA DETALHADA:
+
+Agora você vê:
+
+┌────────┬──────────┬────────┬───────────┬───────┬──────┬─────────────┬────────┐
+│ Mês    │Alimenta. │Moradia │Transportel Lazer │Saúde │Investimentos│  Total │
+├────────┼──────────┼────────┼───────────┼───────┼──────┼─────────────┼────────┤
+│Ago/25  │  R$ 280  │R$ 800  │   R$ 200  │R$ 60  │  -   │  R$ 500    │R$ 1.840│
+│Set/25  │  R$ 300  │R$ 800  │   R$ 180  │R$ 80  │R$ 150│  R$ 750    │R$ 2.260│
+│Out/25  │  R$ 290  │R$ 800  │   R$ 200  │R$ 70  │  -   │ R$ 1.200   │R$ 2.560│
+│Nov/25  │  R$ 280  │R$ 800  │   R$ 180  │R$ 100 │  -   │  R$ 500    │R$ 1.860│
+│Dez/25  │  R$ 320  │R$ 800  │   R$ 200  │R$ 200 │R$ 100│  R$ 750    │R$ 2.370│
+│Jan/26  │  R$ 300  │R$ 800  │   R$ 200  │R$ 60  │  -   │  R$ 750    │R$ 2.110│
+└────────┴──────────┴────────┴───────────┴───────┴──────┴─────────────┴────────┘
+
+💰 Investimentos aparece em uma coluna especial
+🔴 Total Saído em vermelho (mostra quanto saiu do salário)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+💡 O QUE VOCÊ CONSEGUE VER AGORA:
+═══════════════════════════════════════════════════════════════════════════════
+
+EXEMPLO 1: Entender o Total Saído
+   └─ Você ganha R$ 3.000 de salário
+      └─ Janeiro você gastou R$ 2.110 (despesas + investimentos)
+         └─ Sobraram R$ 890
+            └─ Desses R$ 890, R$ 750 foram para investimentos!
+               └─ Seu consumo real foi R$ 1.360
+
+
+EXEMPLO 2: Investimentos são Prioridade?
+   └─ Vê que outubro você investiu R$ 1.200
+      └─ Isso é 47% de tudo que saiu!
+         └─ Mostra que investir é importante para você
+            └─ Planeje melhor os outros gastos então
+
+
+EXEMPLO 3: Meses Mais "Caros"
+   └─ Setembro: R$ 2.260 (mais caro)
+      └─ Mas R$ 750 foram para investimentos
+         └─ Despesas reais: R$ 1.510
+            └─ Separa o que é consumo do que é investimento!
+
+
+EXEMPLO 4: Análise de Investimento
+   └─ Janeiro: R$ 750 em investimentos
+      └─ Você mantém um padrão de investimento?
+         └─ Ou varia conforme a situação?
+            └─ Dados mostram tudo!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🎨 CORES NO GRÁFICO:
+═══════════════════════════════════════════════════════════════════════════════
+
+DESPESAS (cores tradicionais):
+├─ 🟨 Alimentação: Amarelo
+├─ 🔵 Moradia: Azul
+├─ 🔴 Transporte: Vermelho
+├─ 🟣 Lazer: Roxo
+├─ 🟢 Saúde: Verde
+├─ 🔷 Educação: Azul Claro
+└─ ⚫ Outros: Cinza
+
+INVESTIMENTOS (destaque especial):
+└─ 🟦 Investimentos: TURQUESA (diferente de tudo!)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📊 VANTAGENS DESTA VISUALIZAÇÃO:
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ SEPARA CONSUMO DE INVESTIMENTO
+   Agora você vê claramente quanto consome vs quanto investe
+
+✅ COMPARA PERÍODOS
+   Vê se em alguns meses você investiu mais
+
+✅ PLANO FINANCEIRO
+   Sabe quanto pode gastar considerando seus investimentos
+
+✅ REALIDADE COMPLETA
+   Não deixa de lado os investimentos na análise
+
+✅ IDENTIFICA PRIORIDADES
+   Vê se investe consistentemente ou apenas quando sobra
+
+✅ CALCULA NECESSIDADE
+   Sabe quanto precisa ganhar para manter tudo
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📍 ONDE VER:
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Acesse: http://localhost:8000
+2. Clique em "Dashboard"
+3. Role para baixo
+4. Procure por: "Análise Detalhada: Como Cada Categoria de Despesa Evoluiu"
+5. Veja o novo gráfico com 💰 Investimentos incluído!
+6. Role mais um pouco
+7. Na tabela abaixo, veja a coluna "💰 Investimentos"
+8. Veja a coluna "Total Saído" em destaque!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🎯 CÁLCULO DO TOTAL SAÍDO:
+═══════════════════════════════════════════════════════════════════════════════
+
+Total Saído = 
+    Alimentação + 
+    Moradia + 
+    Transporte + 
+    Lazer + 
+    Saúde + 
+    Educação + 
+    Outros + 
+    Investimentos
+
+É o quanto saiu DO SEU SALÁRIO!
+
+Exemplo:
+└─ Salário: R$ 3.000
+├─ Total Saído em Jan: R$ 2.110 (despesas + investimentos)
+└─ Sobrou: R$ 890
+   └─ (Pode ser poupança, outras receitas, etc)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+💡 ANÁLISE COMPLETA AGORA:
+═══════════════════════════════════════════════════════════════════════════════
+
+VOCÊ VÊ:
+├─ Gráfico geral de despesas (previsão)
+├─ Gráfico detalhado por CATEGORIA
+│  └─ Incluindo investimentos!
+└─ Tabela com números exatos
+   └─ Mostrando investimentos separados
+   └─ Total saído do salário destacado
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Agora seu sistema mostra TODA a realidade financeira!
+Despesas + Investimentos = O que realmente sai do seu salário! 💰📊
+
+Recarregue a página para ver as mudanças!

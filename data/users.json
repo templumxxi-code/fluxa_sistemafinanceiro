@@ -1,0 +1,11 @@
+[
+  {
+    "email": "admin@fluxa.com",
+    "password": "$2a$10$oUvt9f75kmi1GCOqIZAitOPVisG0nc2zn2VxicK.8nn9/nOOLSA4y",
+    "role": "admin",
+    "name": "Administrador Fluxa",
+    "createdAt": "20/04/2026",
+    "isActive": true,
+    "isLifetime": true
+  }
+]

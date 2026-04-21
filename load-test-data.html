@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carregar Dados de Teste</title>
+    <style>
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+        }
+        
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        
+        p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .success {
+            color: #10b981;
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Carregar Dados de Teste</h1>
+        <p>Clique no botão abaixo para carregar dados de exemplo e visualizar o novo gráfico de despesas com previsão.</p>
+        
+        <button onclick="loadTestData()">Carregar Dados de Teste</button>
+        
+        <div class="success" id="successMsg">
+            ✅ Dados carregados com sucesso! Redirecionando...
+        </div>
+    </div>
+
+    <script>
+        function loadTestData() {
+            const testData = {
+                receitas: [
+                    { id: 1, data: '2025-10-05', descricao: 'Salário', tipo: 'salario', valor: 3000 },
+                    { id: 2, data: '2025-10-15', descricao: 'Freelance', tipo: 'freelance', valor: 500 },
+                    { id: 3, data: '2025-11-05', descricao: 'Salário', tipo: 'salario', valor: 3000 },
+                    { id: 4, data: '2025-11-20', descricao: 'Freelance', tipo: 'freelance', valor: 800 },
+                    { id: 5, data: '2025-12-05', descricao: 'Salário', tipo: 'salario', valor: 3000 },
+                    { id: 6, data: '2025-12-10', descricao: 'Bônus', tipo: 'bonus', valor: 2000 },
+                    { id: 7, data: '2026-01-05', descricao: 'Salário', tipo: 'salario', valor: 3000 },
+                    { id: 8, data: '2026-01-15', descricao: 'Freelance', tipo: 'freelance', valor: 600 }
+                ],
+                despesas: [
+                    { id: 1, data: '2025-10-01', descricao: 'Aluguel', categoria: 'moradia', tipo: 'recorrente', natureza: 'fixa', valor: 800 },
+                    { id: 2, data: '2025-10-05', descricao: 'Mercado', categoria: 'alimentacao', tipo: 'recorrente', natureza: 'variavel', valor: 250 },
+                    { id: 3, data: '2025-10-10', descricao: 'Cinema', categoria: 'lazer', tipo: 'eventual', natureza: 'variavel', valor: 60 },
+                    { id: 4, data: '2025-10-20', descricao: 'Combustível', categoria: 'transporte', tipo: 'recorrente', natureza: 'variavel', valor: 200 },
+                    { id: 5, data: '2025-11-01', descricao: 'Aluguel', categoria: 'moradia', tipo: 'recorrente', natureza: 'fixa', valor: 800 },
+                    { id: 6, data: '2025-11-03', descricao: 'Educação', categoria: 'educacao', tipo: 'recorrente', natureza: 'fixa', valor: 300 },
+                    { id: 7, data: '2025-11-08', descricao: 'Mercado', categoria: 'alimentacao', tipo: 'recorrente', natureza: 'variavel', valor: 280 },
+                    { id: 8, data: '2025-11-15', descricao: 'Médico', categoria: 'saude', tipo: 'eventual', natureza: 'variavel', valor: 150 },
+                    { id: 9, data: '2025-11-25', descricao: 'Combustível', categoria: 'transporte', tipo: 'recorrente', natureza: 'variavel', valor: 180 },
+                    { id: 10, data: '2025-12-01', descricao: 'Aluguel', categoria: 'moradia', tipo: 'recorrente', natureza: 'fixa', valor: 800 },
+                    { id: 11, data: '2025-12-05', descricao: 'Mercado', categoria: 'alimentacao', tipo: 'recorrente', natureza: 'variavel', valor: 300 },
+                    { id: 12, data: '2025-12-10', descricao: 'Presentes', categoria: 'lazer', tipo: 'eventual', natureza: 'variavel', valor: 200 },
+                    { id: 13, data: '2025-12-15', descricao: 'Academia', categoria: 'saude', tipo: 'recorrente', natureza: 'fixa', valor: 100 },
+                    { id: 14, data: '2025-12-20', descricao: 'Combustível', categoria: 'transporte', tipo: 'recorrente', natureza: 'variavel', valor: 200 },
+                    { id: 15, data: '2026-01-01', descricao: 'Aluguel', categoria: 'moradia', tipo: 'recorrente', natureza: 'fixa', valor: 800 },
+                    { id: 16, data: '2026-01-05', descricao: 'Mercado', categoria: 'alimentacao', tipo: 'recorrente', natureza: 'variavel', valor: 280 },
+                    { id: 17, data: '2026-01-10', descricao: 'Internet', categoria: 'moradia', tipo: 'recorrente', natureza: 'fixa', valor: 100 },
+                    { id: 18, data: '2026-01-15', descricao: 'Combustível', categoria: 'transporte', tipo: 'recorrente', natureza: 'variavel', valor: 200 }
+                ],
+                investimentos: [],
+                orcamento: 3500,
+                meta: 2000,
+                theme: 'light',
+                userName: 'Você',
+                categoriasReceitas: ['salario', 'bonus', 'freelance', 'investimentos', 'outros'],
+                categoriasDespesas: ['alimentacao', 'moradia', 'transporte', 'lazer', 'saude', 'educacao', 'outros'],
+                tiposInvestimentos: ['renda_fixa', 'renda_variavel', 'fundos', 'criptomoedas', 'outros']
+            };
+            
+            localStorage.setItem('financeApp', JSON.stringify(testData));
+            document.getElementById('successMsg').style.display = 'block';
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

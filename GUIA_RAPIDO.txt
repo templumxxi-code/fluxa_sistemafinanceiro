@@ -1,0 +1,146 @@
+# 🎉 GUIA RÁPIDO - Seu Novo Gráfico de Despesas!
+
+## 👋 Bem-vindo!
+
+Você pediu para visualizar suas despesas dos meses passados + uma previsão para o mês atual. **Pronto!** 
+Implementei exatamente o que você precisava! 
+
+---
+
+## 📊 O QUE VOCÊ AGORA CONSEGUE VER:
+
+### 1. **Gráfico Principal: "Despesas nos Últimos 6 Meses + Previsão"**
+
+Localizado no **Dashboard** (tela inicial), logo abaixo dos outros gráficos.
+
+**Você verá:**
+- **Barras Vermelhas**: Suas despesas reais dos meses anteriores
+- **Barras Rosa Claro**: Previsão do quanto você vai gastar até o final do mês atual
+
+### 2. **Como a Previsão é Calculada:**
+
+Não é mágica, é matemática! 📐
+
+```
+Previsão = O que você já gastou + (Gasto diário médio × Dias que faltam)
+```
+
+**Exemplo:**
+- Você gastou R$ 600 nos primeiros 10 dias do mês
+- Gasto diário médio = R$ 60 por dia
+- Faltam 20 dias no mês
+- Previsão = R$ 600 + (R$ 60 × 20) = **R$ 1.800**
+
+---
+
+## 🚀 COMO COMEÇAR A USAR:
+
+### Opção A: Usar seus dados reais
+1. Clique em "Despesas" no menu
+2. Clique em "+ Nova Despesa"
+3. Preencha os dados e salve
+4. Volte ao Dashboard e veja o gráfico atualizar automaticamente!
+
+### Opção B: Testar com dados de exemplo
+1. Acesse: `http://localhost:8000/load-test-data.html`
+2. Clique em "Carregar Dados de Teste"
+3. Veja exemplos de despesas dos últimos meses
+4. Entenda como o sistema funciona
+
+---
+
+## 🎯 BENEFÍCIOS DO NOVO GRÁFICO:
+
+| O que você consegue | Vantagem |
+|------------------|----------|
+| **Ver histórico de 6 meses** | Identificar padrões de gastos |
+| **Previsão automática** | Saber quanto vai gastar sem calcular |
+| **Dados bem organizados** | Tudo está em um só lugar |
+| **Atualização em tempo real** | Muda conforme você adiciona despesas |
+| **Fácil de entender** | Visual claro e intuitivo |
+
+---
+
+## 💡 DICAS DE OURO:
+
+✅ **Dica 1:** Se a previsão for muito alta, economize nos próximos dias!
+
+✅ **Dica 2:** Compare a previsão com seu orçamento mensal (definido em "Dashboard")
+
+✅ **Dica 3:** Analise o histórico para identificar em quais meses gastou mais
+
+✅ **Dica 4:** Use as categorias para entender onde o dinheiro está indo
+
+✅ **Dica 5:** Atualizar diariamente seus gastos deixa a previsão mais precisa
+
+---
+
+## 🎨 OUTROS GRÁFICOS DISPONÍVEIS:
+
+No Dashboard você também encontra:
+
+1. **Despesas por Categoria** - Vê de uma vez onde gasta mais
+2. **Receitas vs Despesas** - Compara o que entra vs o que sai
+3. **Evolução das Receitas** - Acompanha se suas receitas aumentam
+4. **Resumo Mensal (Tabela)** - Mostra sobras/gastos de cada mês
+
+---
+
+## 🔒 SEUS DADOS ESTÃO SEGUROS:
+
+- Tudo é salvo no seu navegador (localStorage)
+- Nada é enviado para servidores
+- Seus dados permanecem privados
+- Você pode fazer backup exportando em PDF ou CSV
+
+---
+
+## 📱 FUNCIONA EM:
+
+✓ Desktop (PC/Notebook)
+✓ Tablet
+✓ Celular
+
+---
+
+## 🆘 DÚVIDAS FREQUENTES:
+
+**P: Como os dados são salvos?**
+R: Automaticamente no seu navegador. Não precisa fazer nada!
+
+**P: Posso editar despesas antigas?**
+R: Sim! Clique em "Despesas", procure a despesa, clique em editar.
+
+**P: A previsão é sempre correta?**
+R: É uma estimativa baseada na sua média. Quanto mais dados, mais precisa!
+
+**P: Posso usar em outros dispositivos?**
+R: Se quiser sincronizar, exporte seus dados em PDF/CSV.
+
+---
+
+## 📞 PRÓXIMOS PASSOS SUGERIDOS:
+
+1. ✅ Adicione seu nome no canto superior esquerdo (clique em "Controle Financeiro")
+2. ✅ Defina seu orçamento mensal (botão "Definir Orçamento")
+3. ✅ Defina uma meta de economia (botão "Definir Meta")
+4. ✅ Adicione algumas despesas para ver os gráficos funcionarem
+5. ✅ Acompanhe seu progresso diariamente!
+
+---
+
+## 🎊 PRONTO!
+
+Seu sistema de controle financeiro está **100% funcional** e **pronto para usar**!
+
+Agora você consegue:
+- ✅ Ver todas suas despesas em um gráfico bonito
+- ✅ Saber quanto tende a gastar até o final do mês
+- ✅ Tomar decisões melhores sobre seus gastos
+- ✅ Organizar sua vida financeira de forma simples
+
+**Aproveite! 💰📊**
+
+---
+
+*Desenvolvido com ❤️ para você controlar melhor suas finanças*

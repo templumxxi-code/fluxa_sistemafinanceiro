@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Fluxa</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+    <div class="login-frame">
+        <section class="brand-panel" aria-label="Apresentação do Fluxa">
+            <div class="brand-badge">Fluxa</div>
+            <div class="brand-content">
+                <span>Plataforma financeira SaaS</span>
+                <h1>Controle financeiro com maturidade e design profissional.</h1>
+                <p>Entre com sua conta para acessar análises, centros, receitas e despesas com segurança e visual premium.</p>
+            </div>
+            <div class="brand-statistics" aria-hidden="true">
+                <article>
+                    <strong>+ 5k</strong>
+                    <span>Relatórios processados</span>
+                </article>
+                <article>
+                    <strong>98%</strong>
+                    <span>Satisfação de clientes</span>
+                </article>
+                <article>
+                    <strong>24/7</strong>
+                    <span>Suporte financeiro</span>
+                </article>
+            </div>
+        </section>
+
+        <section class="login-panel" aria-label="Formulário de login">
+            <div class="login-card">
+                <div class="login-header">
+                    <span>Bem-vindo de volta</span>
+                    <h2>Entre na sua conta Fluxa</h2>
+                </div>
+                <p class="login-subtitle">O acesso ao Fluxa é centralizado. Um único usuário Administrador cria e libera todos os logins.</p>
+
+                <form id="loginForm" class="login-form" novalidate>
+                    <div class="input-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" placeholder="seu@fluxa.com" autocomplete="email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" name="password" placeholder="••••••••••••" autocomplete="current-password" required>
+                    </div>
+
+                    <div class="login-meta">
+                        <a href="#" id="forgotPasswordLink">Esqueci minha senha</a>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Entrar</button>
+                    <p class="login-error" id="loginError" aria-live="polite"></p>
+                </form>
+
+                <div class="login-footer">
+                    <p>Cadastre-se apenas com autorização do Administrador central.</p>
+                    <p><a href="#" id="createAccountLink">Solicitar acesso</a></p>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script defer src="auth.js"></script>
+    <script defer src="login.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║         ✅ ATUALIZAÇÃO: AGORA COM DESPESAS DETALHADAS POR CATEGORIA!       ║
+║                                                                              ║
+║         Você pediu para ver os detalhes das despesas - FEITO! ✨           ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+🎯 O QUE VOCÊ QUERIA:
+═══════════════════════════════════════════════════════════════════════════════
+
+"Quero saber detalhadamente quais foram as despesas, não no geral"
+
+✅ FEITO! Agora você tem:
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📊 NOVO: GRÁFICO DETALHADO DE DESPESAS POR CATEGORIA
+═══════════════════════════════════════════════════════════════════════════════
+
+Nome: "Análise Detalhada: Como Cada Categoria de Despesa Evoluiu"
+
+O QUE MOSTRA:
+├─ Alimentação
+├─ Moradia
+├─ Transporte
+├─ Lazer
+├─ Saúde
+├─ Educação
+└─ Outros
+
+MÊS A MÊS:
+├─ Agosto
+├─ Setembro
+├─ Outubro
+├─ Novembro
+├─ Dezembro
+└─ Janeiro
+
+EXEMPLO DO QUE VOCÊ VÊ:
+
+        Alimentação    Moradia    Transporte    Lazer    Saúde
+Ago     R$ 280         R$ 800     R$ 200       R$ 60    R$ 0
+Set     R$ 300         R$ 800     R$ 180       R$ 80    R$ 150
+Out     R$ 290         R$ 800     R$ 200       R$ 70    R$ 0
+Nov     R$ 280         R$ 800     R$ 180       R$ 100   R$ 0
+Dez     R$ 320         R$ 800     R$ 200       R$ 200   R$ 100
+Jan     R$ 300         R$ 800     R$ 200       R$ 60    R$ 0
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📋 NOVA: TABELA DETALHADA DE DESPESAS POR CATEGORIA
+═══════════════════════════════════════════════════════════════════════════════
+
+Você agora vê uma tabela completa mostrando:
+
+┌─────────┬──────────────┬─────────┬───────────┬────────┬────────┬──────────┐
+│  Mês    │ Alimentação  │ Moradia │ Transporte│ Lazer  │ Saúde  │  Total   │
+├─────────┼──────────────┼─────────┼───────────┼────────┼────────┼──────────┤
+│ Ago/25  │   R$ 280    │ R$ 800 │  R$ 200   │ R$ 60  │   -    │ R$ 1.340 │
+│ Set/25  │   R$ 300    │ R$ 800 │  R$ 180   │ R$ 80  │R$ 150  │ R$ 1.510 │
+│ Out/25  │   R$ 290    │ R$ 800 │  R$ 200   │ R$ 70  │   -    │ R$ 1.360 │
+│ Nov/25  │   R$ 280    │ R$ 800 │  R$ 180   │ R$ 100 │   -    │ R$ 1.360 │
+│ Dez/25  │   R$ 320    │ R$ 800 │  R$ 200   │ R$ 200 │R$ 100  │ R$ 1.620 │
+│ Jan/26  │   R$ 300    │ R$ 800 │  R$ 200   │ R$ 60  │   -    │ R$ 1.360 │
+└─────────┴──────────────┴─────────┴───────────┴────────┴────────┴──────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+💡 COMO USAR ESSAS INFORMAÇÕES:
+═══════════════════════════════════════════════════════════════════════════════
+
+EXEMPLO 1: Identificar Despesa que Aumentou
+   └─ Vê na tabela que "Lazer" foi R$ 200 em dezembro
+      (contra R$ 60 nos outros meses)
+      → Provavelmente festas de fim de ano
+      → Planeje melhor para o próximo natal!
+
+EXEMPLO 2: Acompanhar Padrão de Gastos
+   └─ Vê que "Moradia" é sempre R$ 800 (constante)
+      → Gastos fixos são previsíveis
+      → Foco em reduzir gastos variáveis (alimentação, lazer)
+
+EXEMPLO 3: Encontrar Categoria para Economizar
+   └─ Vê que "Alimentação" varia de R$ 280 a R$ 320
+      → Poderia tentar manter em R$ 250
+      → Economia potencial: R$ 420/ano
+
+EXEMPLO 4: Entender Aumento Total no Mês
+   └─ Dezembro foi R$ 1.620 (maior do ano)
+      → Vê que "Lazer" aumentou R$ 200
+      → Vê que "Saúde" aumentou R$ 100
+      → Total de aumentos: R$ 300 = diferença!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🎨 COMO FICA NA TELA:
+═══════════════════════════════════════════════════════════════════════════════
+
+1. GRÁFICO DE BARRAS COLORIDAS
+   ├─ Cada cor representa uma categoria
+   ├─ Altura da barra = quanto foi gasto
+   ├─ Fácil de comparar visualmente
+   └─ Mostra 6 meses lado a lado
+
+2. TABELA ABAIXO DO GRÁFICO
+   ├─ Números exatos de cada despesa
+   ├─ Total do mês em cada linha
+   ├─ Fácil de ler com valores precisos
+   └─ Mostra onde houve aumento/redução
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📍 ONDE ENCONTRAR:
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Acesse: http://localhost:8000
+2. Clique em "Dashboard"
+3. Role para baixo até encontrar:
+   └─ "Análise Detalhada: Como Cada Categoria de Despesa Evoluiu"
+      └─ Gráfico colorido com todas as categorias ← NOVO!
+         └─ Logo abaixo tem a tabela detalhada ← NOVO!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🎯 VANTAGENS DESTA VISUALIZAÇÃO:
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ IDENTIFICA PADRÕES
+   Vê claramente qual categoria é sempre cara/barata
+
+✅ ENCONTRA GASTOS ANORMAIS
+   Vê quando uma categoria destoou do usual
+
+✅ PLANEJA MELHOR
+   Sabe exatamente onde pode economizar
+
+✅ COMPARA PERÍODOS
+   Vê se um mês foi mais caro que outro e por quê
+
+✅ ENTENDE O DETALHE
+   Não mais precisa tentar lembrar de cabeça!
+
+✅ TOMA DECISÕES
+   Com dados, é fácil saber onde cortar gastos
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🔄 AGORA VOCÊ TEM TUDO:
+═══════════════════════════════════════════════════════════════════════════════
+
+NÍVEL 1 - GERAL:
+├─ Gráfico de "Receitas vs Despesas" (comparação simples)
+└─ Gráfico "Despesas nos Últimos 6 Meses" (total por mês)
+
+NÍVEL 2 - POR CATEGORIA SIMPLES:
+├─ Gráfico "Despesas por Categoria" (pizza/donut)
+└─ Mostra qual categoria você mais gasta
+
+NÍVEL 3 - ANÁLISE DETALHADA ⭐ NOVO!:
+├─ Gráfico "Análise Detalhada" (barras coloridas mês a mês)
+└─ Tabela "Detalhamento Completo" (números exatos)
+
+Você pode:
+✅ Ver o total geral
+✅ Ver por categoria
+✅ Ver categoria por mês
+✅ Comparar evolução
+✅ Identificar anomalias
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🎊 PRÓXIMAS AÇÕES:
+═══════════════════════════════════════════════════════════════════════════════
+
+1. ✅ Acesse http://localhost:8000
+2. ✅ Clique em Dashboard
+3. ✅ Role até o novo gráfico
+4. ✅ Veja suas despesas DETALHADAS
+5. ✅ Use os dados para planejar melhor!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Agora você consegue ver EXATAMENTE como cada categoria mudou ao longo do tempo!
+
+Seu sistema está ainda mais completo! 🚀📊

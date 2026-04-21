@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxa</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-title">
+                    <img src="LOGO.png.png" alt="Logo Fluxa" class="logo-image">
+                    <h1>Fluxa</h1>
+                    <span class="user-name-display" id="userNameDisplay"></span>
+                </div>
+                <input type="text" id="userName" class="user-name-input" placeholder="Digite seu nome" style="display: none;" />
+            </div>
+            
+            <nav class="nav-menu" role="navigation" aria-label="Menu de navegação principal">
+                <button class="nav-item active" data-tab="dashboard" aria-current="page" aria-label="Dashboard - visão geral">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    <span>Dashboard</span>
+                </button>
+
+                <button class="nav-item" data-tab="centros" aria-label="Centros financeiros">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14"/>
+                        <path d="M12 5v14"/>
+                        <circle cx="12" cy="12" r="9"/>
+                    </svg>
+                    <span>Centros</span>
+                </button>
+                
+                <button class="nav-item" data-tab="receitas" aria-label="Receitas">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <polyline points="19 12 12 19 5 12"/>
+                    </svg>
+                    <span>Receitas</span>
+                </button>
+                
+                <button class="nav-item" data-tab="despesas" aria-label="Despesas">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <line x1="12" y1="19" x2="12" y2="5"/>
+                        <polyline points="5 12 12 5 19 12"/>
+                    </svg>
+                    <span>Despesas</span>
+                </button>
+                
+                <button class="nav-item" data-tab="investimentos" aria-label="Investimentos">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                    <span>Investimentos</span>
+                </button>
+                
+                <button class="nav-item" data-tab="relatorios" aria-label="Relatórios">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span>Relatórios</span>
+                </button>
+                
+                <button class="nav-item" data-tab="configuracoes" aria-label="Configurações">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"/>
+                    </svg>
+                    <span>Configurações</span>
+                </button>
+
+                <button class="nav-item admin-only" data-tab="admin" aria-label="Administração" style="display: none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M12 1l3 6h6l-5 5 2 7-6-4-6 4 2-7-5-5h6z"/>
+                    </svg>
+                    <span>Admin</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button id="toggleSidebarBtn" class="toggle-sidebar-btn" title="Esconder/mostrar barra lateral" aria-label="Alternar visibilidade da barra lateral">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <button id="sidebarLogoutBtn" class="logout-sidebar-btn" title="Sair do sistema" aria-label="Sair do sistema">Sair</button>
+            </div>
+            
+            <div class="theme-toggle">
+                <button id="themeToggle" class="theme-btn" aria-label="Alternar tema claro/escuro">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <div class="page-header">
+                    <div class="page-header-title">
+                        <h2>Dashboard</h2>
+                        <p class="welcome-text" id="welcomeText">Bem-vindo(a)!</p>
+                    </div>
+                    <div class="page-header-right">
+                        <div class="header-top-row">
+                            <div class="header-meta">
+                                <span id="currentDate"></span>
+                            </div>
+                            <select id="dashboardCenterSelector" class="filter-select" aria-label="Selecionar centro financeiro"></select>
+                        </div>
+                        <div class="header-bottom-row">
+                            <button id="manageCentersBtn" class="btn-secondary action-button" title="Gerenciar centros">Centros</button>
+                            <select id="dashboardMonthSelector" class="month-selector" aria-label="Selecionar mês"></select>
+                            <button id="resetMonthBtn" class="btn-secondary action-button" title="Ir para o mês atual">Mês Atual</button>
+                        </div>
+                    </div>
+                    <div class="page-header-summary">
+                        <div class="summary-chip">
+                            <span>Centro atual</span>
+                            <strong id="summaryCenterName">Todos os centros</strong>
+                        </div>
+                        <div class="summary-chip">
+                            <span>Saldo previsto</span>
+                            <strong id="summarySaldoPrevisto">R$ 0,00</strong>
+                        </div>
+                        <div class="summary-chip">
+                            <span>Orçamento restante</span>
+                            <strong id="summaryOrcamentoRestante">R$ 0,00</strong>
+                        </div>
+                        <div class="summary-chip">
+                            <span>Progresso da meta</span>
+                            <strong id="summaryMetaProgresso">0%</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Filtros Avançados -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Período:</label>
+                        <select id="periodFilter" class="filter-select">
+                            <option value="current-month">Mês Atual</option>
+                            <option value="last-30-days">Últimos 30 Dias</option>
+                            <option value="last-3-months">Últimos 3 Meses</option>
+                            <option value="this-year">Este Ano</option>
+                            <option value="custom">Personalizado</option>
+                        </select>
+                        <div id="customDateRange">
+                            <input type="date" id="dateFrom" class="filter-input">
+                            <span>até</span>
+                            <input type="date" id="dateTo" class="filter-input">
+                        </div>
+                    </div>
+                    <div class="filter-group filter-dropdown">
+                        <button id="toggleCategoriesBtn" class="btn-secondary dropdown-toggle">Filtrar por Categorias ▼</button>
+                        <div id="categoriesContainer" class="filter-dropdown-panel" style="display: none;">
+                            <span class="dropdown-label">Categorias</span>
+                            <div class="category-filters" id="categoryFilters">
+                                <!-- Será preenchido dinamicamente -->
+                            </div>
+                        </div>
+                    </div>
+                    <button id="applyFiltersBtn" class="btn-primary">Aplicar Filtros</button>
+                    <button id="clearFiltersBtn" class="btn-secondary">Limpar</button>
+                </div>
+                
+                <div class="cards-grid">
+                    <div class="card card-revenue">
+                        <div class="card-header">
+                            <h3>Total de Receitas</h3>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                <polyline points="17 6 23 6 23 12"/>
+                            </svg>
+                        </div>
+                        <p class="card-value" id="totalReceitas">R$ 0,00</p>
+                        <span class="card-subtitle">Este mês</span>
+                    </div>
+                    
+                    <div class="card card-expense">
+                        <div class="card-header">
+                            <h3>Total de Despesas</h3>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/>
+                                <polyline points="17 18 23 18 23 12"/>
+                            </svg>
+                        </div>
+                        <p class="card-value" id="totalDespesas">R$ 0,00</p>
+                        <span class="card-subtitle">Este mês</span>
+                    </div>
+                    
+                    <div class="card card-balance">
+                        <div class="card-header">
+                            <h3>Saldo Atual</h3>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <p class="card-value" id="saldoAtual">R$ 0,00</p>
+                        <span class="card-subtitle">Receitas - Despesas</span>
+                    </div>
+                    
+                    <div class="card card-percentage">
+                        <div class="card-header">
+                            <h3>Gastos do Mês</h3>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                        <p class="card-value" id="percentualGastos">0%</p>
+                        <span class="card-subtitle">do orçamento</span>
+                    </div>
+                </div>
+
+                <!-- Visão por Centros Financeiros -->
+                <div class="center-panels-section">
+                    <div class="section-header">
+                        <div>
+                            <h3>Visão por Centros Financeiros</h3>
+                            <p class="section-subtitle" style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.95rem; max-width: 680px;">
+                                Cada centro financeiro separado em um painel com receitas, despesas, investimentos, saldo e alerta de orçamento.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="center-panels-grid" id="centerPanelsGrid">
+                        <!-- Painéis de centros serão preenchidos dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Orçamento Mensal Automático -->
+                <div class="budget-section">
+                    <div class="section-header">
+                        <h3>Orçamento Mensal</h3>
+                        <button id="setBudgetBtn" class="btn-secondary" style="font-size: 0.85rem;">Definir Manual</button>
+                    </div>
+                    <div class="budget-calculation-info">
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 12px 0;">
+                            <span id="orcamentoModoTexto">Orçamento calculado automaticamente: Receitas - Investimentos</span>
+                        </p>
+                    </div>
+                    <div class="budget-bar">
+                        <div class="budget-progress" id="budgetProgress"></div>
+                    </div>
+                    <div class="budget-info">
+                        <span>Receitas: <strong id="receitasOrcamento">R$ 0,00</strong></span>
+                        <span>Investimentos: <strong id="investimentosOrcamento">R$ 0,00</strong></span>
+                        <span>Orçamento: <strong id="orcamentoTotal">R$ 0,00</strong></span>
+                    </div>
+                    <div class="budget-info" style="margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--border);">
+                        <span>Despesas: <strong id="gastoAtual">R$ 0,00</strong></span>
+                        <span style="color: var(--primary); font-size: 1.05rem;">Disponível: <strong id="orcamentoRestante">R$ 0,00</strong></span>
+                    </div>
+                </div>
+
+                <!-- Controle do Saldo Disponível -->
+                <div class="saldo-disponivel-section">
+                    <div class="section-header">
+                        <div>
+                            <h3>💰 Controle do Dinheiro Disponível</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 4px 0 0 0;">O que sobra para bares, restaurantes, lazer e economia</p>
+                        </div>
+                        <button id="addGastoRapidoBtn" class="btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Adicionar Gasto
+                        </button>
+                    </div>
+                    <div class="saldo-cards-grid">
+                        <div class="saldo-card">
+                            <span class="saldo-label">Disponível Total</span>
+                            <span class="saldo-value" id="saldoDisponivelTotal">R$ 0,00</span>
+                            <span class="saldo-subtitle">Receitas - Despesas - Investimentos</span>
+                        </div>
+                        <div class="saldo-card highlight">
+                            <span class="saldo-label">💳 Gastável Agora</span>
+                            <span class="saldo-value" id="dinheiroGastavel">R$ 0,00</span>
+                            <span class="saldo-subtitle">Clique em "Adicionar Gasto" acima</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficos -->
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>Despesas por Categoria (Pareto)</h3>
+                        <div class="chart-toolbar">
+                            <label for="paretoComparePeriodSelector">Comparar com:</label>
+                            <select id="paretoComparePeriodSelector" class="filter-select">
+                                <option value="previous-month">Mês anterior</option>
+                                <option value="last-3-months">Últimos 3 meses</option>
+                                <option value="same-month-last-year">Mesmo mês do ano anterior</option>
+                                <option value="none">Sem comparação</option>
+                            </select>
+                        </div>
+                        <canvas id="despesasPorCategoria"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3>Receitas vs Despesas</h3>
+                        <canvas id="receitasDespesas"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3>Evolução das Receitas</h3>
+                        <canvas id="evolucaoReceitasDashboard"></canvas>
+                    </div>
+                    
+                    <div class="chart-container insights-container">
+                        <h3>🔥 Maiores Gastos do Mês</h3>
+                        <div id="topDespesasInsights" class="insights-grid">
+                            <!-- Será preenchido dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico Detalhado de Despesas por Categoria -->
+                <div class="chart-container" style="grid-column: 1 / -1;">
+                    <h3>Análise Detalhada: Como Cada Categoria de Despesa Evoluiu</h3>
+                    <p class="chart-subtitle">Veja como seus gastos com alimentação, moradia, transporte, etc. mudaram nos últimos 6 meses</p>
+                    <canvas id="despesasDetalhadasPorCategoria"></canvas>
+                </div>
+
+                <!-- Tabela Detalhada de Despesas por Categoria -->
+                <div class="monthly-summary-section">
+                    <div class="section-header">
+                        <h3>Detalhamento Completo: Despesas por Categoria (Últimos 6 Meses)</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Veja exatamente quanto foi gasto em cada categoria mês a mês</p>
+                    </div>
+                    <div class="monthly-summary-table-container">
+                        <table class="monthly-summary-table">
+                            <thead>
+                                <tr id="tabelaCategoriaHeaderRow">
+                                    <th>Mês</th>
+                                    <!-- Colunas de categorias serão preenchidas dinamicamente -->
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaCategoriaBodyRows">
+                                <!-- Será preenchido dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Resumo do Mês -->
+                <div class="monthly-summary-section">
+                    <div class="section-header">
+                        <h3>Resumo do Mês</h3>
+                    </div>
+                    <div class="monthly-summary-table-container">
+                        <table class="monthly-summary-table">
+                            <thead>
+                                <tr>
+                                    <th>Período</th>
+                                    <th>Total Saído (Despesas + Investimentos)</th>
+                                    <th>Sobras (R$)</th>
+                                    <th>Sobras (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthlySummaryBody">
+                                <!-- Será preenchido dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Meta de Economia -->
+                <div class="goals-section">
+                    <div class="section-header">
+                        <h3>Meta de Economia</h3>
+                        <button id="setGoalBtn" class="btn-primary">Definir Meta</button>
+                    </div>
+                    <div class="goal-progress">
+                        <div class="goal-bar">
+                            <div class="goal-fill" id="goalProgress"></div>
+                        </div>
+                        <div class="goal-info">
+                            <span>Economizado: <strong id="economizado">R$ 0,00</strong></span>
+                            <span>Meta: <strong id="metaTotal">R$ 0,00</strong></span>
+                            <span>Progresso: <strong id="progressoMeta">0%</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Centros Financeiros -->
+            <section id="centros" class="tab-content">
+                <div class="page-header">
+                    <h2>Centros Financeiros</h2>
+                    <div class="page-actions">
+                        <button id="addCentroBtn" class="btn-primary">+ Novo Centro</button>
+                        <button id="clearUnusedCentersBtn" class="btn-secondary">Remover centros não usados</button>
+                        <button id="clearCentersBtn" class="btn-secondary">Apagar todos os centros</button>
+                        <button id="undoDeleteBtn" class="btn-tertiary">Desfazer última exclusão</button>
+                    </div>
+                </div>
+                <p class="section-subtitle" style="margin-bottom: 1rem;">Crie, edite e exclua centros financeiros para separar receitas, despesas e investimentos por empreendimento.</p>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Orçamento</th>
+                                <th>Alerta (%)</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="centrosTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Receitas Tab -->
+            <section id="receitas" class="tab-content">
+                <div class="page-header">
+                    <div class="page-header-title">
+                        <h2>Receitas</h2>
+                        <select id="receitasCenterSelector" class="filter-select" aria-label="Selecionar centro financeiro"></select>
+                    </div>
+                    <button id="addReceitaBtn" class="btn-primary">+ Nova Receita</button>
+                </div>
+
+                <div class="filters">
+                    <select id="filterTipoReceita" class="filter-select">
+                        <option value="todos">Todos os tipos</option>
+                    </select>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Evolução das Receitas</h3>
+                    <canvas id="evolucaoReceitas"></canvas>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Tipo</th>
+                                <th>Valor</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="receitasTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Despesas Tab -->
+            <section id="despesas" class="tab-content">
+                <div class="page-header">
+                    <div class="page-header-title">
+                        <h2>Despesas</h2>
+                        <select id="despesasCenterSelector" class="filter-select" aria-label="Selecionar centro financeiro"></select>
+                    </div>
+                    <button id="addDespesaBtn" class="btn-primary">+ Nova Despesa</button>
+                </div>
+
+                <div class="filters">
+                    <select id="filterCategoriaDespesa" class="filter-select">
+                        <option value="todos">Todas as categorias</option>
+                    </select>
+                    <select id="filterRecorrencia" class="filter-select">
+                        <option value="todos">Todas</option>
+                        <option value="recorrente">Recorrentes</option>
+                        <option value="eventual">Eventuais</option>
+                    </select>
+                    <select id="filterNaturezaDespesa" class="filter-select">
+                        <option value="todos">Todos os tipos</option>
+                        <option value="fixa">Fixas</option>
+                        <option value="variavel">Variáveis</option>
+                    </select>
+                </div>
+
+                <div class="alert-box" id="budgetAlert" style="display: none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <span id="budgetAlertText"></span>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Distribuição de Despesas</h3>
+                    <canvas id="distribuicaoDespesas"></canvas>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Recorrência</th>
+                                <th>Tipo</th>
+                                <th>Valor</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="despesasTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Investimentos Tab -->
+            <section id="investimentos" class="tab-content">
+                <div class="page-header">
+                    <div class="page-header-title">
+                        <h2>Investimentos</h2>
+                        <select id="investimentosCenterSelector" class="filter-select" aria-label="Selecionar centro financeiro"></select>
+                    </div>
+                    <button id="addInvestimentoBtn" class="btn-primary">+ Novo Investimento</button>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>Total Investido</h3>
+                        <p class="card-value" id="totalInvestido">R$ 0,00</p>
+                    </div>
+                    <div class="card">
+                        <h3>Rendimento Total</h3>
+                        <p class="card-value" id="rendimentoTotal">R$ 0,00</p>
+                    </div>
+                    <div class="card">
+                        <h3>Valor Atual</h3>
+                        <p class="card-value" id="valorAtualInvestimentos">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Evolução dos Investimentos</h3>
+                    <canvas id="evolucaoInvestimentos"></canvas>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Tipo</th>
+                                <th>Valor Investido</th>
+                                <th>Rendimento</th>
+                                <th>Valor Atual</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="investimentosTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Relatórios Tab -->
+            <section id="relatorios" class="tab-content">
+                <div class="page-header">
+                    <h2>Relatórios</h2>
+                    <div class="export-buttons">
+                        <button id="exportPdfBtn" class="btn-secondary">Exportar PDF</button>
+                        <button id="exportCsvBtn" class="btn-secondary">Exportar CSV</button>
+                    </div>
+                </div>
+
+                <!-- Filtros Avançados para Relatórios -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Período:</label>
+                        <select id="reportPeriodFilter" class="filter-select">
+                            <option value="current-month">Mês Atual</option>
+                            <option value="last-30-days">Últimos 30 Dias</option>
+                            <option value="last-3-months">Últimos 3 Meses</option>
+                            <option value="this-year">Este Ano</option>
+                            <option value="custom">Personalizado</option>
+                        </select>
+                        <div id="reportCustomDateRange" style="display: none;">
+                            <input type="date" id="reportDateFrom" class="filter-input">
+                            <input type="date" id="reportDateTo" class="filter-input">
+                        </div>
+                    </div>
+                    <div class="filter-group filter-dropdown">
+                        <button id="toggleReportCategoriesBtn" class="btn-secondary dropdown-toggle">Filtrar por Categorias ▼</button>
+                        <div id="reportCategoriesContainer" class="filter-dropdown-panel" style="display: none;">
+                            <span class="dropdown-label">Categorias</span>
+                            <div class="category-filters" id="reportCategoryFilters">
+                                <!-- Será preenchido dinamicamente -->
+                            </div>
+                        </div>
+                    </div>
+                    <button id="applyReportFiltersBtn" class="btn-primary">Aplicar Filtros</button>
+                    <button id="clearReportFiltersBtn" class="btn-secondary">Limpar</button>
+                </div>
+
+                <div class="report-summary">
+                    <h3>Resumo do Mês Atual</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span>Receitas</span>
+                            <strong id="reportReceitas">R$ 0,00</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Despesas</span>
+                            <strong id="reportDespesas">R$ 0,00</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Investimentos</span>
+                            <strong id="reportInvestimentos">R$ 0,00</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Saldo</span>
+                            <strong id="reportSaldo">R$ 0,00</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Análises Qualitativas -->
+                <div class="financial-analysis-section">
+                    <div class="section-header">
+                        <h3>Análise Financeira Qualitativa</h3>
+                        <p class="section-subtitle">Indicadores baseados em melhores práticas de finanças pessoais</p>
+                    </div>
+                    <div class="analysis-grid" id="financialAnalysis">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                    <div class="analysis-insights" id="financialInsights">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Comparativo Mensal</h3>
+                    <canvas id="comparativoMensal"></canvas>
+                </div>
+
+                <div class="report-details">
+                    <h3>Detalhamento por Categoria</h3>
+                    <div id="categoriasDetalhamento"></div>
+                </div>
+            </section>
+
+            <!-- Configurações Tab -->
+            <section id="configuracoes" class="tab-content">
+                <div class="page-header">
+                    <h2>Configurações</h2>
+                </div>
+
+                <!-- Informações do Cadastro -->
+                <div class="config-section">
+                    <h3>Informações do Cadastro</h3>
+                    <div class="config-card">
+                        <div class="config-info-group">
+                            <div class="config-info-item">
+                                <label>Nome de Usuário</label>
+                                <div class="info-display">
+                                    <span id="configUserName">---</span>
+                                    <button class="btn-edit" id="editUserNameBtn">✎ Editar</button>
+                                </div>
+                                <input type="text" id="configUserNameInput" class="config-input" style="display: none;" />
+                                <div class="button-group" id="editUserNameGroup" style="display: none;">
+                                    <button class="btn-secondary" id="cancelEditUserName">Cancelar</button>
+                                    <button class="btn-primary" id="saveEditUserName">Salvar</button>
+                                </div>
+                            </div>
+
+                            <div class="config-info-item">
+                                <label>Email</label>
+                                <div class="info-display">
+                                    <span id="configEmail">---</span>
+                                    <button class="btn-edit" id="editEmailBtn">✎ Editar</button>
+                                </div>
+                                <input type="email" id="configEmailInput" class="config-input" style="display: none;" />
+                                <div class="button-group" id="editEmailGroup" style="display: none;">
+                                    <button class="btn-secondary" id="cancelEditEmail">Cancelar</button>
+                                    <button class="btn-primary" id="saveEditEmail">Salvar</button>
+                                </div>
+                            </div>
+
+                            <div class="config-info-item">
+                                <label>Data de Criação</label>
+                                <span id="configCreatedDate">---</span>
+                            </div>
+
+                            <div class="config-info-item">
+                                <label>Última Atualização</label>
+                                <span id="configLastUpdate">---</span>
+                            </div>
+
+                            <div class="config-info-item">
+                                <label>Versão do Sistema</label>
+                                <span id="configVersion">1.0.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section" id="adminUserManagementSection" style="display: none;">
+                    <h3>Gestão de Usuários</h3>
+                    <div class="config-card user-management-card">
+                        <p class="admin-note">O Administrador central do Fluxa pode criar e gerir logins de acesso para a equipe.</p>
+                        <form id="userCreateForm" class="user-create-form" novalidate>
+                            <div class="form-row">
+                                <label for="newUserName">Nome do usuário</label>
+                                <input type="text" id="newUserName" class="config-input" placeholder="Nome completo" required>
+                            </div>
+                            <div class="form-row">
+                                <label for="newUserEmail">E-mail</label>
+                                <input type="email" id="newUserEmail" class="config-input" placeholder="usuario@fluxa.com" required>
+                            </div>
+                            <div class="form-row">
+                                <label for="newUserPassword">Senha</label>
+                                <input type="password" id="newUserPassword" class="config-input" placeholder="Mínimo 8 caracteres" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Criar novo login</button>
+                            <p class="login-error" id="userCreateMessage" aria-live="polite"></p>
+                        </form>
+
+                        <div class="user-list">
+                            <h4>Usuários cadastrados</h4>
+                            <div id="userListContainer"></div>
+                        </div>
+
+                        <button class="btn-secondary" id="logoutBtn">Sair do Fluxa</button>
+                    </div>
+                </div>
+
+                <div class="config-section" id="userManagementLockedSection" style="display: none;">
+                    <h3>Gestão de Acesso</h3>
+                    <div class="config-card">
+                        <p>O acesso dos usuários do Fluxa é centralizado. Novos logins são criados apenas pelo Administrador central.</p>
+                        <button class="btn-secondary" id="logoutBtnLocked">Sair do Fluxa</button>
+                    </div>
+                </div>
+
+                <!-- Metas Personalizadas -->
+                <div class="config-section">
+                    <h3>Metas Personalizadas</h3>
+                    <div class="config-card">
+                        <div class="config-info-item">
+                            <label>Meta Mensal de Receitas</label>
+                            <div class="info-display">
+                                <span id="configMetaReceitas">R$ 0,00</span>
+                                <button class="btn-edit" id="editMetaReceitasBtn">✎ Editar</button>
+                            </div>
+                            <input type="number" id="configMetaReceitasInput" class="config-input" style="display: none;" placeholder="Ex: 5000">
+                            <div class="button-group" id="editMetaReceitasGroup" style="display: none;">
+                                <button class="btn-secondary" id="cancelEditMetaReceitas">Cancelar</button>
+                                <button class="btn-primary" id="saveEditMetaReceitas">Salvar</button>
+                            </div>
+                        </div>
+
+                        <div class="config-info-item">
+                            <label>Meta Mensal de Despesas</label>
+                            <div class="info-display">
+                                <span id="configMetaDespesas">R$ 0,00</span>
+                                <button class="btn-edit" id="editMetaDespesasBtn">✎ Editar</button>
+                            </div>
+                            <input type="number" id="configMetaDespesasInput" class="config-input" style="display: none;" placeholder="Ex: 3000">
+                            <div class="button-group" id="editMetaDespesasGroup" style="display: none;">
+                                <button class="btn-secondary" id="cancelEditMetaDespesas">Cancelar</button>
+                                <button class="btn-primary" id="saveEditMetaDespesas">Salvar</button>
+                            </div>
+                        </div>
+
+                        <div class="config-info-item">
+                            <label>Meta de Investimentos</label>
+                            <div class="info-display">
+                                <span id="configMetaInvestimentos">R$ 0,00</span>
+                                <button class="btn-edit" id="editMetaInvestimentosBtn">✎ Editar</button>
+                            </div>
+                            <input type="number" id="configMetaInvestimentosInput" class="config-input" style="display: none;" placeholder="Ex: 1000">
+                            <div class="button-group" id="editMetaInvestimentosGroup" style="display: none;">
+                                <button class="btn-secondary" id="cancelEditMetaInvestimentos">Cancelar</button>
+                                <button class="btn-primary" id="saveEditMetaInvestimentos">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual do Sistema -->
+                <div class="config-section">
+                    <h3>Manual do Sistema</h3>
+                    <div class="config-card">
+                        <div class="accordion" id="manualAccordion">
+                            <div class="accordion-item">
+                                <button class="accordion-header">📱 Bem-vindo ao Fluxa</button>
+                                <div class="accordion-content">
+                                    <p><strong>Fluxa</strong> é seu sistema pessoal de gestão financeira inteligente. Aqui você controla:</p>
+                                    <ul>
+                                        <li>💰 <strong>Receitas:</strong> Todos os seus ganhos</li>
+                                        <li>🏪 <strong>Despesas:</strong> Gastos organizados por categoria</li>
+                                        <li>📈 <strong>Investimentos:</strong> Acompanhamento de aplicações financeiras</li>
+                                        <li>🎯 <strong>Centros Financeiros:</strong> Separe finanças (pessoal, empresa, projeto)</li>
+                                        <li>📊 <strong>Relatórios:</strong> Análises detalhadas do seu comportamento financeiro</li>
+                                        <li>🔒 <strong>Segurança:</strong> Seus dados ficam 100% no seu computador, protegidos por senha</li>
+                                    </ul>
+                                    <p style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);"><strong>⚙️ Configurar Inicial:</strong> Acesse <strong>Configurações</strong>, defina seu nome e uma senha forte para proteger seus dados.</p>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <button class="accordion-header">📊 Dashboard - Sua Visão Financeira Completa</button>
+                                <div class="accordion-content">
+                                    <p>A Dashboard é o coração do Fluxa. Aqui você visualiza:</p>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">📈 Cartões de Resumo</h4>
+                                    <ul>
+                                        <li><strong>Total de Receitas:</strong> Soma de todos os ganhos do mês</li>
+                                        <li><strong>Total de Despesas:</strong> Soma de todos os gastos do mês</li>
+                                        <li><strong>Saldo Atual:</strong> Receitas - Despesas</li>
+                                        <li><strong>Gastos do Mês:</strong> Percentual do orçamento gasto</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">💳 Orçamento Mensal</h4>
+                                    <p>Acompanha quanto você pode gastar baseado nas suas receitas e investimentos. O sistema calcula automaticamente e oferece alertas quando você está próximo do limite.</p>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">💰 Dinheiro Disponível</h4>
+                                    <p>Mostra exatamente quanto de dinheiro você tem livre para gastar em lazer, bares, restaurantes, etc. após descontar despesas e investimentos.</p>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">📉 Gráficos Interativos</h4>
+                                    <ul>
+                                        <li><strong>Despesas por Categoria:</strong> Pizza com distribuição dos seus gastos</li>
+                                        <li><strong>Receitas vs Despesas:</strong> Comparativo mensal em gráfico de barras</li>
+                                        <li><strong>Evolução:</strong> Tendência de receitas nos últimos meses</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">🎯 Filtros e Seletores</h4>
+                                    <ul>
+                                        <li>Selecione um <strong>Centro Financeiro</strong> específico ou visualize todos</li>
+                                        <li>Escolha o <strong>mês/ano</strong> para análise histórica</li>
+                                        <li>Use <strong>filtros avançados</strong> por período e categorias</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <button class="accordion-header">🏛️ Centros Financeiros - Organize Suas Finanças</button>
+                                <div class="accordion-content">
+                                    <p><strong>Centros Financeiros</strong> permitem separar e organizar suas finanças em grupos. Exemplos:</p>
+                                    <ul>
+                                        <li>🧑‍💼 <strong>Pessoal:</strong> Suas despesas e ganhos pessoais</li>
+                                        <li>🏢 <strong>Empresa/Negócio:</strong> Receitas e gastos da sua empresa</li>
+                                        <li>👨‍👩‍👧 <strong>Família:</strong> Despesas compartilhadas com a família</li>
+                                        <li>🚗 <strong>Projeto:</strong> Finanças de um projeto específico</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">✅ Como Criar um Centro</h4>
+                                    <ol>
+                                        <li>Acesse a aba <strong>Centros</strong> no menu lateral</li>
+                                        <li>Clique em <strong>+ Novo Centro</strong> (requer senha)</li>
+                                        <li>Preencha os dados:
+                                            <ul>
+                                                <li><strong>Nome:</strong> Identifique claramente (ex: Projeto Website)</li>
+                                                <li><strong>Descrição:</strong> Detalhes adicionais (opcional)</li>
+                                                <li><strong>Orçamento:</strong> Limite mensal de gastos</li>
+                                                <li><strong>Alerta:</strong> % do orçamento para avisos (padrão 90%)</li>
+                                            </ul>
+                                        </li>
+                                        <li>Clique em <strong>Salvar</strong></li>
+                                    </ol>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">⚙️ Gerenciamento</h4>
+                                    <ul>
+                                        <li><strong>Editar:</strong> Clique no lápis para modificar informações</li>
+                                        <li><strong>Deletar:</strong> Clique no lixo (dados são salvos para recuperação)</li>
+                                        <li><strong>Desfazer:</strong> Recupere até 20 exclusões recentes</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <button class="accordion-header">💵 Receitas - Registre Seus Ganhos</button>
+                                <div class="accordion-content">
+                                    <p><strong>Receitas</strong> são todas as entradas de dinheiro. Exemplos:</p>
+                                    <ul>
+                                        <li>💼 Salário mensal</li>
+                                        <li>🎁 Bônus ou prêmios</li>
+                                        <li>🛒 Vendas ou freelance</li>
+                                        <li>📦 Aluguel de imóvel</li>
+                                        <li>🎰 Outras fontes de renda</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">✅ Como Adicionar uma Receita</h4>
+                                    <ol>
+                                        <li>Acesse a aba <strong>Receitas</strong></li>
+                                        <li>Clique em <strong>+ Nova Receita</strong></li>
+                                        <li>Preencha os campos:
+                                            <ul>
+                                                <li><strong>Data:</strong> Quando você recebeu o dinheiro</li>
+                                                <li><strong>Descrição:</strong> Detalhes da receita (ex: Salário Abril)</li>
+                                                <li><strong>Tipo/Categoria:</strong> Salário, Bônus, Freelance, etc.</li>
+                                                <li><strong>Centro:</strong> Qual centro financeiro (Pessoal, Empresa, etc.)</li>
+                                                <li><strong>Valor:</strong> Quantia recebida em reais</li>
+                                            </ul>
+                                        </li>
+                                        <li>Clique em <strong>Salvar</strong></li>
+                                    </ol>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">💡 Dicas</h4>
+                                    <ul>
+                                        <li>✓ Crie categorias bem definidas para melhor análise</li>
+                                        <li>✓ Use descrições claras que você entenda meses depois</li>
+                                        <li>✓ Registre logo após receber para não esquecer</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <button class="accordion-header">🛍️ Despesas - Controle Seus Gastos</button>
+                                <div class="accordion-content">
+                                    <p><strong>Despesas</strong> são todas as saídas de dinheiro. Organize por categoria:</p>
+                                    <ul>
+                                        <li>🏠 <strong>Moradia:</strong> Aluguel, condomínio, água, luz, internet</li>
+                                        <li>🚗 <strong>Transporte:</strong> Gasolina, uber, ônibus, estacionamento</li>
+                                        <li>🍽️ <strong>Alimentação:</strong> Supermercado, restaurante, delivery</li>
+                                        <li>🏥 <strong>Saúde:</strong> Farmácia, médico, dentista, academia</li>
+                                        <li>🎮 <strong>Lazer:</strong> Cinema, bares, games, viagens</li>
+                                        <li>📚 <strong>Educação:</strong> Cursos, livros, treinamentos</li>
+                                        <li>👗 <strong>Compras:</strong> Roupas, sapatos, eletrônicos</li>
+                                        <li>📱 <strong>Pessoal:</strong> Telefone, assinaturas, serviços</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">✅ Como Adicionar uma Despesa</h4>
+                                    <ol>
+                                        <li>Acesse a aba <strong>Despesas</strong></li>
+                                        <li>Clique em <strong>+ Nova Despesa</strong></li>
+                                        <li>Preencha os campos:
+                                            <ul>
+                                                <li><strong>Data:</strong> Dia que você gastou</li>
+                                                <li><strong>Descrição:</strong> O quê e onde (ex: Supermercado Carrefour)</li>
+                                                <li><strong>Categoria:</strong> Selecione uma categoria existente ou crie nova</li>
+                                                <li><strong>Centro:</strong> Qual centro financeiro</li>
+                                                <li><strong>Recorrência:</strong> É recorrente (fixa todo mês) ou eventual?</li>
+                                                <li><strong>Tipo:</strong> Fixa (mesmo valor) ou Variável (muda)?</li>
+                                                <li><strong>Valor:</strong> Quantia gasta em reais</li>
+                                            </ul>
+                                        </li>
+                                        <li>Clique em <strong>Salvar</strong></li>
+                                    </ol>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">⚠️ Alertas de Orçamento</h4>
+                                    <p>Se suas despesas ultrapassarem o limite do centro, você receberá um alerta. Configure o percentual de alerta nas informações do centro.</p>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">💡 Dicas</h4>
+                                    <ul>
+                                        <li>✓ Registre TODAS as despesas, até as pequenas</li>
+                                        <li>✓ Diferencie fixas de variáveis para previsões melhores</li>
+                                        <li>✓ Use filtros para analisar por categoria ou tipo</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <button class="accordion-header">📈 Investimentos - Acompanhe Seus Ativos</button>
+                                <div class="accordion-content">
+                                    <p><strong>Investimentos</strong> são aplicações de dinheiro para crescimento futuro:</p>
+                                    <ul>
+                                        <li>🏦 <strong>Renda Fixa:</strong> CDB, Tesouro Direto, Debêntures</li>
+                                        <li>📊 <strong>Ações:</strong> Stocks de empresas</li>
+                                        <li>💰 <strong>Cripto:</strong> Bitcoin, Ethereum, outros</li>
+                                        <li>🏠 <strong>Imóvel:</strong> Propriedades</li>
+                                        <li>💎 <strong>Ouro/Commodities:</strong> Metais e matérias-primas</li>
+                                        <li>📚 <strong>Outros:</strong> Fundos, ETFs, copilot operações</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">✅ Como Registrar um Investimento</h4>
+                                    <ol>
+                                        <li>Acesse a aba <strong>Investimentos</strong></li>
+                                        <li>Clique em <strong>+ Novo Investimento</strong></li>
+                                        <li>Preencha os dados:
+                                            <ul>
+                                                <li><strong>Data:</strong> Quando você investiu</li>
+                                                <li><strong>Descrição:</strong> Nome do investimento (ex: CDB Banco X)</li>
+                                                <li><strong>Tipo:</strong> Categoria do investimento</li>
+                                                <li><strong>Centro:</strong> Qual centro financeiro</li>
+                                                <li><strong>Valor Investido:</strong> Quanto você investiu</li>
+                                                <li><strong>Rendimento:</strong> Lucro ou prejuízo até agora</li>
+                                            </ul>
+                                        </li>
+                                        <li>Clique em <strong>Salvar</strong></li>
+                                    </ol>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">📊 Métricas Automáticas</h4>
+                                    <ul>
+                                        <li><strong>Total Investido:</strong> Soma de todos os investimentos</li>
+                                        <li><strong>Rendimento Total:</strong> Lucro/prejuízo acumulado</li>
+                                        <li><strong>Valor Atual:</strong> Investimento + Rendimento</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <button class="accordion-header">📊 Relatórios - Análise Profissional</button>
+                                <div class="accordion-content">
+                                    <p><strong>Relatórios</strong> transformam seus dados em insights valiosos para melhorar suas finanças.</p>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">📋 Resumo do Período</h4>
+                                    <p>Visualize em cards:</p>
+                                    <ul>
+                                        <li>Receitas totais do período</li>
+                                        <li>Despesas totais do período</li>
+                                        <li>Investimentos realizados</li>
+                                        <li>Saldo final (Receitas - Despesas - Investimentos)</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">📈 Análise Qualitativa</h4>
+                                    <p>O sistema calcula indicadores financeiros:</p>
+                                    <ul>
+                                        <li><strong>Saúde Financeira:</strong> Excelente, Bom, Atenção ou Crítico</li>
+                                        <li><strong>Taxa de Poupança:</strong> % do que você economiza</li>
+                                        <li><strong>Razão Despesa/Receita:</strong> Se está dentro do saudável</li>
+                                        <li><strong>Observações e Dicas:</strong> Recomendações personalizadas</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">🔍 Filtros Avançados</h4>
+                                    <ol>
+                                        <li>Selecione um <strong>Período:</strong> Mês Atual, 30 dias, 3 meses, Ano, Personalizado</li>
+                                        <li>Filtre por <strong>Categorias</strong> específicas</li>
+                                        <li>Clique em <strong>Aplicar Filtros</strong></li>
+                                    </ol>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">📤 Exportação</h4>
+                                    <ul>
+                                        <li><strong>PDF:</strong> Para relatório visual, apresentações e impressão</li>
+                                        <li><strong>CSV:</strong> Para análise em Excel/Sheets e integração com outras ferramentas</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">💡 Dicas</h4>
+                                    <ul>
+                                        <li>✓ Gere relatórios mensais para acompanhamento</li>
+                                        <li>✓ Compare períodos para identificar tendências</li>
+                                        <li>✓ Use os dados de exportação para planejamento avançado</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <button class="accordion-header">⚙️ Configurações - Personalize o Sistema</button>
+                                <div class="accordion-content">
+                                    <h4 style="margin-bottom: 0.5rem; color: var(--primary);">👤 Perfil do Usuário</h4>
+                                    <ul>
+                                        <li><strong>Nome:</strong> Exibido na sidebar do sistema</li>
+                                        <li><strong>Email:</strong> Para referência (não usado para login)</li>
+                                        <li><strong>Metas Financeiras:</strong> Defina suas metas pessoais de economia</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">🔒 Segurança</h4>
+                                    <ul>
+                                        <li><strong>Senha:</strong> Proteja todas as ações sensíveis (criar centro, deletar, etc.)</li>
+                                        <li><strong>Mínimo 4 caracteres</strong> de comprimento</li>
+                                        <li>Mudança de senha exige digitação da senha atual</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">🌙 Aparência</h4>
+                                    <ul>
+                                        <li>Alterne entre <strong>Modo Claro</strong> e <strong>Modo Escuro</strong></li>
+                                        <li>Use o botão 🌙 na barra lateral</li>
+                                        <li>Sua preferência é salva automaticamente</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">💾 Backup e Restauração</h4>
+                                    <ul>
+                                        <li><strong>Baixar Backup:</strong> Salve todos os seus dados como arquivo JSON</li>
+                                        <li><strong>Restaurar Backup:</strong> Importe um arquivo de backup anterior</li>
+                                        <li>Recomendado: Faça backup 1x por mês</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">🗑️ Zona de Perigo</h4>
+                                    <ul>
+                                        <li><strong>Deletar Conta:</strong> Remove tudo permanentemente (irrecuperável)</li>
+                                        <li>Requer confirmação com senha e digitação de "DELETAR TUDO"</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <button class="accordion-header">🔒 Segurança e Privacidade</button>
+                                <div class="accordion-content">
+                                    <h4 style="margin-bottom: 0.5rem; color: var(--primary);">🏠 Dados Locais (100% Privacidade)</h4>
+                                    <p>Todos os seus dados são armazenados <strong>APENAS no seu computador/navegador</strong>. Nada é enviado para servidores externos. Isso significa:</p>
+                                    <ul>
+                                        <li>✓ Total privacidade e segurança</li>
+                                        <li>✓ Nenhum rastreamento</li>
+                                        <li>✓ Funciona sem internet (apenas para exportação)</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">🔐 Proteção por Senha</h4>
+                                    <p>Ações sensíveis requerem sua senha:</p>
+                                    <ul>
+                                        <li>Criar novo Centro Financeiro</li>
+                                        <li>Deletar Centros</li>
+                                        <li>Desfazer exclusões</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">⚠️ Importante</h4>
+                                    <ul>
+                                        <li>Se limpar o <strong>cache/histórico do navegador</strong>, seus dados podem ser perdidos</li>
+                                        <li><strong>Faça backups regulares</strong> para não perder informações</li>
+                                        <li>Não compartilhe sua senha com ninguém</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <button class="accordion-header">💡 Dicas e Boas Práticas</button>
+                                <div class="accordion-content">
+                                    <h4 style="margin-bottom: 0.5rem; color: var(--primary);">🎯 Melhores Práticas</h4>
+                                    <ul>
+                                        <li>✓ <strong>Registre regularmente:</strong> Diariamente ou 2x na semana</li>
+                                        <li>✓ <strong>Seja específico:</strong> Descrições claras ajudam na análise</li>
+                                        <li>✓ <strong>Organize categorias:</strong> Crie categorias que fazem sentido para você</li>
+                                        <li>✓ <strong>Use centros:</strong> Separe pessoal de negócio/projeto</li>
+                                        <li>✓ <strong>Defina metas:</strong> Economie com propósito</li>
+                                        <li>✓ <strong>Analise mensalmente:</strong> Gere relatórios para aprender</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">📊 Para Melhorar Suas Finanças</h4>
+                                    <ul>
+                                        <li>🎯 Estabeleça um orçamento realista por centro</li>
+                                        <li>📈 Acompanhe a evolução mês a mês</li>
+                                        <li>💰 Invista uma % consistente de suas receitas</li>
+                                        <li>🔍 Identifique despesas desnecessárias nos relatórios</li>
+                                        <li>🎁 Crie categorias para metas (viagem, carro, educação)</li>
+                                    </ul>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">⏰ Cronograma Recomendado</h4>
+                                    <ul>
+                                        <li><strong>Diário:</strong> Registre gastos do dia (2 minutos)</li>
+                                        <li><strong>Semanal:</strong> Revise transações (10 minutos)</li>
+                                        <li><strong>Mensal:</strong> Analise relatório e planeje (30 minutos)</li>
+                                        <li><strong>Trimestral:</strong> Compare períodos e ajuste metas</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <button class="accordion-header">❓ Perguntas Frequentes</button>
+                                <div class="accordion-content">
+                                    <h4 style="margin-bottom: 0.5rem; color: var(--primary);">P: Posso acessar de outro computador?</h4>
+                                    <p><strong>R:</strong> Como os dados são locais, você precisará fazer backup e restaurar em outro computador. Use a função "Baixar Backup" nas Configurações.</p>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">P: Esqueci minha senha!</h4>
+                                    <p><strong>R:</strong> Não há recuperação de senha. Você pode deletar a conta (perdendo dados) e criar uma nova. Por isso, faça backups!</p>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">P: Posso ter múltiplos centros e usuários?</h4>
+                                    <p><strong>R:</strong> Sim! Um único usuário pode gerenciar múltiplos centros. Para múltiplos usuários, use perfis diferentes do navegador.</p>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">P: Como deletar um centro sem perder dados?</h4>
+                                    <p><strong>R:</strong> Os dados (receitas, despesas, investimentos) permanecem. Apenas o registro do centro é deletado. Use "Desfazer" para recuperar.</p>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">P: Posso editar transações depois?</h4>
+                                    <p><strong>R:</strong> Sim! Clique no lápis (✎) em qualquer transação para editar ou no lixo (🗑) para deletar.</p>
+                                    <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">P: Como importar dados de outro app?</h4>
+                                    <p><strong>R:</strong> Exporte dados do outro app como CSV e, se necessário, reformate para ser importado aqui. Contacte suporte para dúvidas.</p>
+                                </div>
+                            </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Nova Receita -->
+    <div id="modalReceita" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nova Receita</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="formReceita">
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="receitaData" required>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" id="receitaDescricao" placeholder="Ex: Salário de Janeiro" required>
+                </div>
+                <div class="form-group">
+                    <label>Centro Financeiro</label>
+                    <select id="receitaCentro" class="filter-select" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select id="receitaTipo" required>
+                    </select>
+                    <button type="button" class="btn-add-category" id="addCategoriaReceita">+ Nova Categoria</button>
+                    <button type="button" class="btn-add-category" id="editCategoriaReceita">✎ Editar Categoria</button>
+                </div>
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" id="receitaValor" step="0.01" placeholder="0,00" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Nova Despesa -->
+    <div id="modalDespesa" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nova Despesa</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="formDespesa">
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="despesaData" required>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" id="despesaDescricao" placeholder="Ex: Conta de luz" required>
+                </div>
+                <div class="form-group">
+                    <label>Centro Financeiro</label>
+                    <select id="despesaCentro" class="filter-select" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="despesaCategoria" required>
+                    </select>
+                    <button type="button" class="btn-add-category" id="addCategoriaDespesa">+ Nova Categoria</button>
+                    <button type="button" class="btn-add-category" id="editCategoriaDespesa">✎ Editar Categoria</button>
+                </div>
+                <div class="form-group">
+                    <label>Recorrência</label>
+                    <select id="despesaTipo" required>
+                        <option value="recorrente">Recorrente</option>
+                        <option value="eventual">Eventual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Despesa</label>
+                    <select id="despesaNatureza" required>
+                        <option value="fixa">Fixa</option>
+                        <option value="variavel">Variável</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" id="despesaValor" step="0.01" placeholder="0,00" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Novo Investimento -->
+    <div id="modalInvestimento" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Novo Investimento</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="formInvestimento">
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="investimentoData" required>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" id="investimentoDescricao" placeholder="Ex: Tesouro Direto" required>
+                </div>
+                <div class="form-group">
+                    <label>Centro Financeiro</label>
+                    <select id="investimentoCentro" class="filter-select" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select id="investimentoTipo" required>
+                    </select>
+                    <button type="button" class="btn-add-category" id="addCategoriaInvestimento">+ Nova Categoria</button>
+                    <button type="button" class="btn-add-category" id="editCategoriaInvestimento">✎ Editar Categoria</button>
+                </div>
+                <div class="form-group">
+                    <label>Valor Investido (R$)</label>
+                    <input type="number" id="investimentoValor" step="0.01" placeholder="0,00" required>
+                </div>
+                <div class="form-group">
+                    <label>Rendimento (R$)</label>
+                    <input type="number" id="investimentoRendimento" step="0.01" placeholder="0,00" value="0">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Gasto Rápido -->
+    <div id="modalGastoRapido" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💸 Adicionar Gasto Rápido</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="formGastoRapido">
+                <div class="form-group">
+                    <label>O que você gastou?</label>
+                    <input type="text" id="gastoRapidoDescricao" placeholder="Ex: Almoço, Bar, Cinema..." required autofocus>
+                </div>
+                <div class="form-group">
+                    <label>Centro Financeiro</label>
+                    <select id="gastoRapidoCentro" class="filter-select" required></select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Valor (R$)</label>
+                        <input type="number" id="gastoRapidoValor" step="0.01" placeholder="0,00" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="gastoRapidoCategoria" required>
+                            <option value="alimentacao">🍔 Alimentação</option>
+                            <option value="lazer" selected>🎉 Lazer</option>
+                            <option value="transporte">🚗 Transporte</option>
+                            <option value="saude">💊 Saúde</option>
+                            <option value="outros">📦 Outros</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="gastoRapidoData" required>
+                </div>
+
+                <div class="gasto-rapido-info">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>💳 Gastável atual:</span>
+                        <strong id="gastoRapidoSaldoAtual">R$ 0,00</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--border);">
+                        <span>Depois do gasto:</span>
+                        <strong id="gastoRapidoSaldoDepois" style="color: var(--primary);">R$ 0,00</strong>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn-primary">Registrar Gasto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Centro Financeiro -->
+    <div id="modalCentro" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalCentroTitle">Novo Centro Financeiro</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="formCentro">
+                <input type="hidden" id="centroId">
+                <div class="form-group">
+                    <label>Nome do Centro</label>
+                    <input type="text" id="centroNome" placeholder="Ex: Loja Online" required>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" id="centroDescricao" placeholder="Ex: Receitas e despesas do empreendimento">
+                </div>
+                <div class="form-group">
+                    <label>Orçamento Mensal do Centro (R$)</label>
+                    <input type="number" id="centroOrcamento" step="0.01" placeholder="0,00">
+                </div>
+                <div class="form-group">
+                    <label>Alerta de Orçamento (%)</label>
+                    <input type="number" id="centroAlertaPercentual" step="1" min="1" max="100" value="90" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar Centro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Definir Orçamento -->
+    <div id="modalOrcamento" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Orçamento Mensal</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="formOrcamento">
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="orcamentoAutomatico" checked>
+                        <span>Usar orçamento automático (Receitas - Investimentos)</span>
+                    </label>
+                </div>
+                <div class="form-group" id="orcamentoManualGroup" style="display: none;">
+                    <label>Valor do Orçamento Manual (R$)</label>
+                    <input type="number" id="orcamentoValor" step="0.01" placeholder="0,00">
+                    <small style="color: var(--text-secondary); display: block; margin-top: 4px;">Defina um valor fixo se quiser limitar ainda mais seus gastos</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Definir Meta -->
+    <div id="modalMeta" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Definir Meta de Economia</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="formMeta">
+                <div class="form-group">
+                    <label>Valor da Meta (R$)</label>
+                    <input type="number" id="metaValor" step="0.01" placeholder="0,00" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
