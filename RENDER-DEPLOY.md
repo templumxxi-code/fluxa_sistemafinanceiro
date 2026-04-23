@@ -35,10 +35,22 @@ Preencha os campos:
 2. Adicione estas variáveis:
 
 ```
-PORT=10000
 JWT_SECRET=fluxa-secret-key-2024-production-change-this-123456789
 NODE_ENV=production
 ```
+
+> ⚠️ Não defina `PORT` manualmente. O Render fornece a porta automaticamente através de `process.env.PORT`.
+
+## 📋 PASSO 4.1: USAR UM BANCO DE DADOS EXTERNO
+
+Para garantir persistência real e não depender do disco local do Render, use um banco PostgreSQL externo.
+
+1. No painel do Render, clique em **"New"** > **"PostgreSQL"**
+2. Escolha um nome e crie o banco de dados
+3. O Render vai gerar automaticamente uma variável de ambiente `DATABASE_URL`
+4. Não é preciso configurar `DATABASE_URL` manualmente se o banco for o gerenciado do Render
+
+Seu app já está preparado para usar o PostgreSQL.
 
 ## 📋 PASSO 5: DEPLOY
 
