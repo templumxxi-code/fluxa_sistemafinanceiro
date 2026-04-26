@@ -1823,21 +1823,21 @@ function updateBankBalances() {
             <div class="bank-balance-header">
                 <h4>${banco}</h4>
                 <span class="bank-balance-amount ${totals.saldo >= 0 ? 'positive' : 'negative'}">
-                    ${formatCurrency(totals.saldo)}
+                    ${formatCurrencyInteger(totals.saldo)}
                 </span>
             </div>
             <div class="bank-balance-details">
                 <div class="bank-balance-detail">
                     <span>Receitas:</span>
-                    <span class="positive">${formatCurrency(totals.totalReceitas)}</span>
+                    <span class="positive">${formatCurrencyInteger(totals.totalReceitas)}</span>
                 </div>
                 <div class="bank-balance-detail">
                     <span>Despesas:</span>
-                    <span class="negative">${formatCurrency(totals.totalDespesas)}</span>
+                    <span class="negative">${formatCurrencyInteger(totals.totalDespesas)}</span>
                 </div>
                 <div class="bank-balance-detail">
                     <span>Investimentos:</span>
-                    <span class="neutral">${formatCurrency(totals.totalInvestido)}</span>
+                    <span class="neutral">${formatCurrencyInteger(totals.totalInvestido)}</span>
                 </div>
             </div>
         `;
@@ -2155,9 +2155,9 @@ function updateMonthlySummary() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="month-cell">${mesFormatado}</td>
-            <td>${formatCurrency(totalSaido)}</td>
-            <td class="${sobrasClass}">${formatCurrency(sobras)}</td>
-            <td class="${percentualClass}">${sobrasPercentual.toFixed(1)}%</td>
+            <td>${formatCurrencyInteger(totalSaido)}</td>
+            <td class="${sobrasClass}">${formatCurrencyInteger(sobras)}</td>
+            <td class="${percentualClass}">${formatPercent(sobrasPercentual)}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -2741,7 +2741,7 @@ function atualizarTabelaDespesasDetalhadas(despesasPorMesCategoria, meses, meses
             totalDespesas += valor;
             
             if (valor > 0) {
-                td.textContent = formatCurrency(valor);
+                td.textContent = formatCurrencyInteger(valor);
                 td.style.color = 'var(--text-primary)';
             } else {
                 td.textContent = '-';
@@ -2755,7 +2755,7 @@ function atualizarTabelaDespesasDetalhadas(despesasPorMesCategoria, meses, meses
         const tdInv = document.createElement('td');
         const valorInv = despesasPorMesCategoria[mes]['investimentos'] || 0;
         if (valorInv > 0) {
-            tdInv.textContent = formatCurrency(valorInv);
+            tdInv.textContent = formatCurrencyInteger(valorInv);
             tdInv.style.color = '#14b8a6';
             tdInv.style.fontWeight = '600';
         } else {
@@ -2769,7 +2769,7 @@ function atualizarTabelaDespesasDetalhadas(despesasPorMesCategoria, meses, meses
         // Coluna de total
         const tdTotal = document.createElement('td');
         const totalMes = totalDespesas + valorInv;
-        tdTotal.textContent = formatCurrency(totalMes);
+        tdTotal.textContent = formatCurrencyInteger(totalMes);
         tdTotal.style.textAlign = 'right';
         tdTotal.style.fontWeight = '700';
         tdTotal.style.color = '#ef4444';
@@ -2805,7 +2805,7 @@ function renderReceitas() {
             <td>${formatDate(receita.data)}</td>
             <td>${receita.descricao}</td>
             <td>${capitalize(receita.tipo)}</td>
-            <td style="color: var(--revenue); font-weight: 600;">${formatCurrency(receita.valor)}</td>
+            <td style="color: var(--revenue); font-weight: 600;">${formatCurrencyInteger(receita.valor)}</td>
             <td>
                 <button class="action-btn edit" onclick="editItem('receitas', ${receita.id})" title="Editar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2989,7 +2989,7 @@ function renderDespesas() {
             <td>${capitalize(despesa.categoria)}</td>
             <td><span class="badge badge-${despesa.tipo}">${capitalize(despesa.tipo)}</span></td>
             <td><span class="badge badge-${despesa.natureza || 'variavel'}">${capitalize(despesa.natureza || 'variável')}</span></td>
-            <td style="color: var(--expense); font-weight: 600;">${formatCurrency(despesa.valor)}</td>
+            <td style="color: var(--expense); font-weight: 600;">${formatCurrencyInteger(despesa.valor)}</td>
             <td>
                 <button class="action-btn edit" onclick="editItem('despesas', ${despesa.id})" title="Editar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3158,11 +3158,11 @@ function renderInvestimentos() {
             <td>${formatDate(inv.data)}</td>
             <td>${inv.descricao}</td>
             <td>${capitalize(inv.tipo.replace('_', ' '))}</td>
-            <td>${formatCurrency(inv.valorInvestido)}</td>
+            <td>${formatCurrencyInteger(inv.valorInvestido)}</td>
             <td style="color: ${inv.rendimento >= 0 ? 'var(--success)' : 'var(--expense)'}; font-weight: 600;">
-                ${formatCurrency(inv.rendimento)}
+                ${formatCurrencyInteger(inv.rendimento)}
             </td>
-            <td style="font-weight: 600;">${formatCurrency(valorAtual)}</td>
+            <td style="font-weight: 600;">${formatCurrencyInteger(valorAtual)}</td>
             <td>
                 <button class="action-btn edit" onclick="editItem('investimentos', ${inv.id})" title="Editar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3659,7 +3659,7 @@ function renderCentros() {
             <td>${capitalize(centro.nome)}</td>
             <td>${centro.banco || '—'}</td>
             <td>${centro.descricao || '—'}</td>
-            <td>${centro.orcamento > 0 ? formatCurrency(centro.orcamento) : 'Automático'}</td>
+            <td>${centro.orcamento > 0 ? formatCurrencyInteger(centro.orcamento) : 'Automático'}</td>
             <td>${centro.alertaPercentual}%</td>
             <td>
                 <button class="action-btn edit" onclick="editCentro('${centro.id}')" title="Editar">
@@ -4206,6 +4206,21 @@ function formatCurrency(value) {
         style: 'currency',
         currency: 'BRL'
     }).format(value);
+}
+
+function formatCurrencyInteger(value) {
+    // Para tabelas, mostrar apenas valores inteiros (sem centavos)
+    return 'R$ ' + Math.round(value).toLocaleString('pt-BR');
+}
+
+function formatPercent(value) {
+    // Garante que porcentagens sempre mostrem o símbolo %
+    return Math.round(value) + '%';
+}
+
+function formatPercentDecimal(value) {
+    // Para casos onde decimais são necessários (gráficos, tooltips)
+    return value.toFixed(1) + '%';
 }
 
 function formatDate(dateString) {
