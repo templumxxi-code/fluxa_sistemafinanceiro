@@ -1849,15 +1849,24 @@ function clearAllCenters() {
     const confirmed = confirm('Tem certeza de que deseja apagar todos os centros financeiros? Essa ação não removerá receitas, despesas ou investimentos, apenas os registros de centros.');
     if (!confirmed) return;
 
-    backupDeletedCenters(appState.centrosFinanceiros);
-    appState.centrosFinanceiros = [];
-    appState.selectedCentroId = 'all';
-    saveToLocalStorage();
-    populateCenterSelectors();
-    renderCentros();
-    updateDashboard();
-    updateUndoButtonState();
-    alert('Todos os centros financeiros foram apagados. Você pode desfazer a exclusão usando o botão de desfazer.');
+    // Deletar todos os centros do servidor
+    const deletePromises = appState.centrosFinanceiros.map(centro => deleteCentroFinanceiro(centro.id));
+
+    Promise.all(deletePromises).then(() => {
+        // Se todos foram deletados com sucesso do servidor, limpar o estado local
+        backupDeletedCenters(appState.centrosFinanceiros);
+        appState.centrosFinanceiros = [];
+        appState.selectedCentroId = 'all';
+        saveToLocalStorage();
+        populateCenterSelectors();
+        renderCentros();
+        updateDashboard();
+        updateUndoButtonState();
+        alert('Todos os centros financeiros foram apagados. Você pode desfazer a exclusão usando o botão de desfazer.');
+    }).catch(error => {
+        console.error('Erro ao deletar todos os centros:', error);
+        alert('Erro ao apagar centros financeiros');
+    });
 }
 
 function clearUnusedCenters() {
@@ -1876,18 +1885,27 @@ function clearUnusedCenters() {
     const confirmed = confirm(`Encontrados ${unusedCenters.length} centro(s) sem transações. Deseja removê-los?`);
     if (!confirmed) return;
 
-    backupDeletedCenters(unusedCenters);
-    appState.centrosFinanceiros = appState.centrosFinanceiros.filter(c => usedIds.has(c.id));
-    if (!appState.centrosFinanceiros.some(c => c.id === appState.selectedCentroId)) {
-        appState.selectedCentroId = 'all';
-    }
+    // Deletar cada centro do servidor
+    const deletePromises = unusedCenters.map(centro => deleteCentroFinanceiro(centro.id));
 
-    saveToLocalStorage();
-    populateCenterSelectors();
-    renderCentros();
-    updateDashboard();
-    updateUndoButtonState();
-    alert(`${unusedCenters.length} centro(s) sem transações foram removidos. Você pode desfazer a exclusão se precisar.`);
+    Promise.all(deletePromises).then(() => {
+        // Se todos foram deletados com sucesso do servidor, remover do estado local
+        backupDeletedCenters(unusedCenters);
+        appState.centrosFinanceiros = appState.centrosFinanceiros.filter(c => usedIds.has(c.id));
+        if (!appState.centrosFinanceiros.some(c => c.id === appState.selectedCentroId)) {
+            appState.selectedCentroId = 'all';
+        }
+
+        saveToLocalStorage();
+        populateCenterSelectors();
+        renderCentros();
+        updateDashboard();
+        updateUndoButtonState();
+        alert(`${unusedCenters.length} centro(s) sem transações foram removidos. Você pode desfazer a exclusão se precisar.`);
+    }).catch(error => {
+        console.error('Erro ao deletar centros não usados:', error);
+        alert('Erro ao remover centros não usados');
+    });
 }
 
 function undoLastCenterDeletion() {
@@ -1902,25 +1920,94 @@ function undoLastCenterDeletion() {
         return;
     }
 
+    // Recriar o centro no servidor primeiro
     if (backup.centro) {
-        appState.centrosFinanceiros.push(backup.centro);
-    }
-    if (Array.isArray(backup.receitas)) {
-        appState.receitas.push(...backup.receitas);
-    }
-    if (Array.isArray(backup.despesas)) {
-        appState.despesas.push(...backup.despesas);
-    }
-    if (Array.isArray(backup.investimentos)) {
-        appState.investimentos.push(...backup.investimentos);
-    }
+        const centroData = {
+            nome: backup.centro.nome,
+            banco: backup.centro.banco || '',
+            descricao: backup.centro.descricao || '',
+            orcamento: backup.centro.orcamento || 0,
+            alertaPercentual: backup.centro.alertaPercentual || 90,
+            meta: backup.centro.meta || 0
+        };
 
-    saveToLocalStorage();
-    populateCenterSelectors();
-    renderCentros();
-    updateDashboard();
-    updateUndoButtonState();
-    alert('Última exclusão de centro foi desfeita.');
+        saveCentroFinanceiro(centroData).then((savedCentro) => {
+            // Atualizar o ID do centro restaurado
+            const restoredCentro = { ...backup.centro, id: savedCentro.id.toString() };
+
+            // Recriar as transações vinculadas ao centro
+            const recreatePromises = [];
+
+            if (Array.isArray(backup.receitas)) {
+                backup.receitas.forEach(receita => {
+                    const receitaData = {
+                        data: receita.data,
+                        descricao: receita.descricao,
+                        centroId: restoredCentro.id,
+                        categoria: receita.categoria,
+                        valor: receita.valor
+                    };
+                    recreatePromises.push(saveFinancialData('receita', receitaData));
+                });
+            }
+
+            if (Array.isArray(backup.despesas)) {
+                backup.despesas.forEach(despesa => {
+                    const despesaData = {
+                        data: despesa.data,
+                        descricao: despesa.descricao,
+                        centroId: restoredCentro.id,
+                        categoria: despesa.categoria,
+                        tipo: despesa.tipo,
+                        natureza: despesa.natureza,
+                        valor: despesa.valor
+                    };
+                    recreatePromises.push(saveFinancialData('despesa', despesaData));
+                });
+            }
+
+            if (Array.isArray(backup.investimentos)) {
+                backup.investimentos.forEach(investimento => {
+                    const investimentoData = {
+                        data: investimento.data,
+                        descricao: investimento.descricao,
+                        centroId: restoredCentro.id,
+                        categoria: investimento.categoria,
+                        valor: investimento.valor,
+                        rendimento: investimento.rendimento || 0
+                    };
+                    recreatePromises.push(saveFinancialData('investimento', investimentoData));
+                });
+            }
+
+            Promise.all(recreatePromises).then(() => {
+                // Se tudo foi recriado com sucesso, restaurar no estado local
+                appState.centrosFinanceiros.push(restoredCentro);
+                if (Array.isArray(backup.receitas)) {
+                    appState.receitas.push(...backup.receitas);
+                }
+                if (Array.isArray(backup.despesas)) {
+                    appState.despesas.push(...backup.despesas);
+                }
+                if (Array.isArray(backup.investimentos)) {
+                    appState.investimentos.push(...backup.investimentos);
+                }
+
+                saveToLocalStorage();
+                populateCenterSelectors();
+                renderCentros();
+                updateDashboard();
+                updateUndoButtonState();
+                alert('Última exclusão de centro foi desfeita.');
+            }).catch(error => {
+                console.error('Erro ao recriar transações:', error);
+                alert('Erro ao desfazer exclusão - centro foi restaurado, mas algumas transações podem não ter sido.');
+            });
+        }).catch(error => {
+            console.error('Erro ao recriar centro:', error);
+            alert('Erro ao desfazer exclusão do centro.');
+        });
+    }
 }
 
 function updateUndoButtonState() {
@@ -3612,19 +3699,26 @@ function deleteCentro(id) {
     const centro = appState.centrosFinanceiros.find(c => c.id === id);
     if (!centro) return;
 
-    backupDeletedCenters([centro]);
-    appState.centrosFinanceiros = appState.centrosFinanceiros.filter(c => c.id !== id);
-    appState.receitas = appState.receitas.filter(r => r.centroId !== id);
-    appState.despesas = appState.despesas.filter(d => d.centroId !== id);
-    appState.investimentos = appState.investimentos.filter(i => i.centroId !== id);
+    // Primeiro deletar do servidor
+    deleteCentroFinanceiro(id).then(() => {
+        // Se deletou com sucesso do servidor, então remover do estado local
+        backupDeletedCenters([centro]);
+        appState.centrosFinanceiros = appState.centrosFinanceiros.filter(c => c.id !== id);
+        appState.receitas = appState.receitas.filter(r => r.centroId !== id);
+        appState.despesas = appState.despesas.filter(d => d.centroId !== id);
+        appState.investimentos = appState.investimentos.filter(i => i.centroId !== id);
 
-    if (appState.selectedCentroId === id) {
-        appState.selectedCentroId = 'all';
-    }
-    saveToLocalStorage();
-    updateUndoButtonState();
-    updateDashboard();
-    renderAllData();
+        if (appState.selectedCentroId === id) {
+            appState.selectedCentroId = 'all';
+        }
+        saveToLocalStorage();
+        updateUndoButtonState();
+        updateDashboard();
+        renderAllData();
+    }).catch(error => {
+        console.error('Erro ao deletar centro:', error);
+        alert('Erro ao deletar centro financeiro');
+    });
 }
 
 // Exportar Relatórios
