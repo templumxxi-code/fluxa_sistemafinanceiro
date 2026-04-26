@@ -74,19 +74,6 @@ class Database {
                 )
             `);
 
-            await this.pool.query(`
-                ALTER TABLE financial_centers ADD COLUMN IF NOT EXISTS description TEXT DEFAULT '';
-            `);
-            await this.pool.query(`
-                ALTER TABLE financial_centers ADD COLUMN IF NOT EXISTS orcamento REAL DEFAULT 0;
-            `);
-            await this.pool.query(`
-                ALTER TABLE financial_centers ADD COLUMN IF NOT EXISTS alerta_percentual REAL DEFAULT 90;
-            `);
-            await this.pool.query(`
-                ALTER TABLE financial_centers ADD COLUMN IF NOT EXISTS meta REAL DEFAULT 0;
-            `);
-
             await this.createAdminUser();
         } catch (err) {
             console.error('Erro ao inicializar PostgreSQL:', err);
@@ -154,18 +141,6 @@ class Database {
                 console.error('Erro ao criar tabela financial_centers:', err);
             }
         });
-            this.db.run(`
-                ALTER TABLE financial_centers ADD COLUMN IF NOT EXISTS description TEXT DEFAULT '';
-            `);
-            this.db.run(`
-                ALTER TABLE financial_centers ADD COLUMN IF NOT EXISTS orcamento REAL DEFAULT 0;
-            `);
-            this.db.run(`
-                ALTER TABLE financial_centers ADD COLUMN IF NOT EXISTS alerta_percentual REAL DEFAULT 90;
-            `);
-            this.db.run(`
-                ALTER TABLE financial_centers ADD COLUMN IF NOT EXISTS meta REAL DEFAULT 0;
-            `);
     }
 
     async createAdminUser() {

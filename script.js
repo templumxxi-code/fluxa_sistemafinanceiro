@@ -147,8 +147,8 @@ function loadDataFromAPI() {
 
         financialData = financialData.map(item => ({
             ...item,
-            data: item.data || item.date,
-            date: item.date || item.data,
+            data: item.data || item.date || '',
+            date: item.date || item.data || '',
             descricao: item.descricao || item.description || '',
             description: item.description || item.descricao || '',
             centroId: item.centroId || item.centro_id || 'default',
@@ -158,7 +158,7 @@ function loadDataFromAPI() {
             category: item.category || item.categoria || '',
             valor: item.valor != null ? item.valor : item.amount != null ? item.amount : 0,
             valorInvestido: item.valorInvestido != null ? item.valorInvestido : item.amount != null ? item.amount : 0
-        }));
+        })).filter(item => item.data && item.data.trim() !== ''); // Filtrar itens sem data válida
         
         // Organize financial data by type
         appState.receitas = financialData.filter(item => item.type === 'receita');
@@ -1351,9 +1351,14 @@ function initializeForms() {
     // Form Receita
     document.getElementById('formReceita').addEventListener('submit', (e) => {
         e.preventDefault();
+        const dataValue = document.getElementById('receitaData').value;
+        if (!dataValue) {
+            alert('Por favor, selecione uma data para a receita.');
+            return;
+        }
         const receita = {
             id: Date.now(),
-            data: document.getElementById('receitaData').value,
+            data: dataValue,
             descricao: document.getElementById('receitaDescricao').value,
             centroId: document.getElementById('receitaCentro').value,
             categoria: document.getElementById('receitaTipo').value,
@@ -1375,9 +1380,14 @@ function initializeForms() {
     // Form Despesa
     document.getElementById('formDespesa').addEventListener('submit', (e) => {
         e.preventDefault();
+        const dataValue = document.getElementById('despesaData').value;
+        if (!dataValue) {
+            alert('Por favor, selecione uma data para a despesa.');
+            return;
+        }
         const despesa = {
             id: Date.now(),
-            data: document.getElementById('despesaData').value,
+            data: dataValue,
             descricao: document.getElementById('despesaDescricao').value,
             centroId: document.getElementById('despesaCentro').value,
             categoria: document.getElementById('despesaCategoria').value,
@@ -1402,10 +1412,15 @@ function initializeForms() {
     // Form Investimento
     document.getElementById('formInvestimento').addEventListener('submit', (e) => {
         e.preventDefault();
+        const dataValue = document.getElementById('investimentoData').value;
+        if (!dataValue) {
+            alert('Por favor, selecione uma data para o investimento.');
+            return;
+        }
         const despesaId = Date.now() + 1;
         const investimento = {
             id: Date.now(),
-            data: document.getElementById('investimentoData').value,
+            data: dataValue,
             descricao: document.getElementById('investimentoDescricao').value,
             centroId: document.getElementById('investimentoCentro').value,
             categoria: document.getElementById('investimentoTipo').value,
@@ -1916,7 +1931,7 @@ function updateMonthlySummary() {
     // Processar receitas
     filterBySelectedCentro(appState.receitas).forEach(r => {
         const date = r.data || r.date;
-        if (!date) return;
+        if (!date || typeof date !== 'string' || date.length < 7) return;
         const mes = date.substring(0, 7); // YYYY-MM
         if (!monthlyData[mes]) {
             monthlyData[mes] = { receitas: 0, despesas: 0, investimentos: 0 };
@@ -1927,7 +1942,7 @@ function updateMonthlySummary() {
     // Processar despesas
     filterBySelectedCentro(appState.despesas).forEach(d => {
         const date = d.data || d.date;
-        if (!date) return;
+        if (!date || typeof date !== 'string' || date.length < 7) return;
         const mes = date.substring(0, 7); // YYYY-MM
         if (!monthlyData[mes]) {
             monthlyData[mes] = { receitas: 0, despesas: 0, investimentos: 0 };
@@ -1938,7 +1953,7 @@ function updateMonthlySummary() {
     // Processar investimentos
     filterBySelectedCentro(appState.investimentos).forEach(inv => {
         const date = inv.data || inv.date;
-        if (!date) return;
+        if (!date || typeof date !== 'string' || date.length < 7) return;
         const mes = date.substring(0, 7); // YYYY-MM
         if (!monthlyData[mes]) {
             monthlyData[mes] = { receitas: 0, despesas: 0, investimentos: 0 };
@@ -4021,9 +4036,12 @@ function formatCurrency(value) {
 }
 
 function formatDate(dateString) {
-    if (!dateString) return '';
-    const [year, month, day] = String(dateString).split('-');
-    return `${day || ''}/${month || ''}/${year || ''}`;
+    if (!dateString || typeof dateString !== 'string') return '';
+    const parts = dateString.split('-');
+    if (parts.length !== 3) return '';
+    const [year, month, day] = parts;
+    if (!year || !month || !day) return '';
+    return `${day}/${month}/${year}`;
 }
 
 function capitalize(str) {
