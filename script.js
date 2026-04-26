@@ -241,7 +241,8 @@ function saveCentroFinanceiro(data) {
         description: data.descricao || '',
         orcamento: data.orcamento || 0,
         alertaPercentual: data.alertaPercentual || 90,
-        meta: data.meta || 0
+        meta: data.meta || 0,
+        banco: data.banco || ''
     };
 
     return apiRequest('/api/financial-centers', {
@@ -258,7 +259,8 @@ function updateCentroFinanceiro(id, data) {
         description: data.descricao || '',
         orcamento: data.orcamento || 0,
         alertaPercentual: data.alertaPercentual || 90,
-        meta: data.meta || 0
+        meta: data.meta || 0,
+        banco: data.banco || ''
     };
 
     return apiRequest(`/api/financial-centers/${id}`, {
@@ -1517,6 +1519,7 @@ function initializeForms() {
         const centroData = {
             id: id || `centro-${Date.now()}`,
             nome: document.getElementById('centroNome').value.trim(),
+            banco: document.getElementById('centroBanco').value,
             descricao: document.getElementById('centroDescricao').value.trim(),
             orcamento: parseFloat(document.getElementById('centroOrcamento').value) || 0,
             alertaPercentual: parseFloat(document.getElementById('centroAlertaPercentual').value) || 90,
@@ -1524,6 +1527,10 @@ function initializeForms() {
         };
         if (!centroData.nome) {
             alert('Nome do centro é obrigatório.');
+            return;
+        }
+        if (!centroData.banco) {
+            alert('Banco é obrigatório.');
             return;
         }
 
@@ -1724,6 +1731,9 @@ function updateDashboard() {
     
     // Atualizar Resumo Mensal
     updateMonthlySummary();
+
+    // Atualizar Saldos por Banco
+    updateBankBalances();
 }
 
 function getCenterMonthTotals(centroId, monthKey = getSelectedMonthKey()) {
@@ -1766,6 +1776,73 @@ function backupDeletedCenters(centros) {
     if (appState.deletedCenterBackups.length > 20) {
         appState.deletedCenterBackups.splice(0, appState.deletedCenterBackups.length - 20);
     }
+}
+
+function updateBankBalances() {
+    const bankBalancesGrid = document.getElementById('bankBalancesGrid');
+    if (!bankBalancesGrid) return;
+
+    // Agrupar centros por banco
+    const bankTotals = {};
+    const currentMonth = getSelectedMonthKey();
+
+    appState.centrosFinanceiros.forEach(centro => {
+        if (!centro.banco) return;
+
+        if (!bankTotals[centro.banco]) {
+            bankTotals[centro.banco] = {
+                totalReceitas: 0,
+                totalDespesas: 0,
+                totalInvestido: 0,
+                saldo: 0
+            };
+        }
+
+        // Calcular totais do mês atual para este centro
+        const { totalReceitas, totalDespesas, totalInvestido } = getCenterMonthTotals(centro.id, currentMonth);
+        const saldo = totalReceitas - totalDespesas - totalInvestido;
+
+        bankTotals[centro.banco].totalReceitas += totalReceitas;
+        bankTotals[centro.banco].totalDespesas += totalDespesas;
+        bankTotals[centro.banco].totalInvestido += totalInvestido;
+        bankTotals[centro.banco].saldo += saldo;
+    });
+
+    // Renderizar os cards de saldo por banco
+    bankBalancesGrid.innerHTML = '';
+
+    if (Object.keys(bankTotals).length === 0) {
+        bankBalancesGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Nenhum centro financeiro com banco cadastrado ainda.</p>';
+        return;
+    }
+
+    Object.entries(bankTotals).forEach(([banco, totals]) => {
+        const bankCard = document.createElement('div');
+        bankCard.className = 'bank-balance-card';
+        bankCard.innerHTML = `
+            <div class="bank-balance-header">
+                <h4>${banco}</h4>
+                <span class="bank-balance-amount ${totals.saldo >= 0 ? 'positive' : 'negative'}">
+                    ${formatCurrency(totals.saldo)}
+                </span>
+            </div>
+            <div class="bank-balance-details">
+                <div class="bank-balance-detail">
+                    <span>Receitas:</span>
+                    <span class="positive">${formatCurrency(totals.totalReceitas)}</span>
+                </div>
+                <div class="bank-balance-detail">
+                    <span>Despesas:</span>
+                    <span class="negative">${formatCurrency(totals.totalDespesas)}</span>
+                </div>
+                <div class="bank-balance-detail">
+                    <span>Investimentos:</span>
+                    <span class="neutral">${formatCurrency(totals.totalInvestido)}</span>
+                </div>
+            </div>
+        `;
+        bankBalancesGrid.appendChild(bankCard);
+    });
 }
 
 function clearAllCenters() {
@@ -3493,6 +3570,7 @@ function renderCentros() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${capitalize(centro.nome)}</td>
+            <td>${centro.banco || '—'}</td>
             <td>${centro.descricao || '—'}</td>
             <td>${centro.orcamento > 0 ? formatCurrency(centro.orcamento) : 'Automático'}</td>
             <td>${centro.alertaPercentual}%</td>
@@ -3522,6 +3600,7 @@ function editCentro(id) {
     document.getElementById('modalCentroTitle').textContent = 'Editar Centro Financeiro';
     document.getElementById('centroId').value = centro.id;
     document.getElementById('centroNome').value = centro.nome;
+    document.getElementById('centroBanco').value = centro.banco || '';
     document.getElementById('centroDescricao').value = centro.descricao || '';
     document.getElementById('centroOrcamento').value = centro.orcamento || '';
     document.getElementById('centroAlertaPercentual').value = centro.alertaPercentual || 90;

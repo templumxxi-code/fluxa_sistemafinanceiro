@@ -413,6 +413,17 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Saldos por Banco -->
+                <div class="bank-balances-section">
+                    <div class="section-header">
+                        <h3>💰 Saldos por Banco</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Veja quanto dinheiro você tem em cada banco/instituição financeira</p>
+                    </div>
+                    <div class="bank-balances-grid" id="bankBalancesGrid">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
             </section>
 
             <!-- Centros Financeiros -->
@@ -432,6 +443,7 @@
                         <thead>
                             <tr>
                                 <th>Nome</th>
+                                <th>Banco</th>
                                 <th>Descrição</th>
                                 <th>Orçamento</th>
                                 <th>Alerta (%)</th>
@@ -1371,6 +1383,25 @@
                 <div class="form-group">
                     <label>Nome do Centro</label>
                     <input type="text" id="centroNome" placeholder="Ex: Loja Online" required>
+                </div>
+                <div class="form-group">
+                    <label>Banco</label>
+                    <select id="centroBanco" required>
+                        <option value="">Selecione um banco</option>
+                        <option value="Banco do Brasil">Banco do Brasil</option>
+                        <option value="Bradesco">Bradesco</option>
+                        <option value="Itaú">Itaú</option>
+                        <option value="Santander">Santander</option>
+                        <option value="Caixa Econômica">Caixa Econômica</option>
+                        <option value="Nubank">Nubank</option>
+                        <option value="Inter">Inter</option>
+                        <option value="C6 Bank">C6 Bank</option>
+                        <option value="PicPay">PicPay</option>
+                        <option value="Mercado Pago">Mercado Pago</option>
+                        <option value="PagSeguro">PagSeguro</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Outro">Outro</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Descrição</label>

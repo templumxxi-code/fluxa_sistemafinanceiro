@@ -70,6 +70,7 @@ class Database {
                     orcamento REAL DEFAULT 0,
                     alerta_percentual REAL DEFAULT 90,
                     meta REAL DEFAULT 0,
+                    banco TEXT DEFAULT '',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             `);
@@ -133,6 +134,7 @@ class Database {
                 orcamento REAL DEFAULT 0,
                 alerta_percentual REAL DEFAULT 90,
                 meta REAL DEFAULT 0,
+                banco TEXT DEFAULT '',
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users (id)
             )

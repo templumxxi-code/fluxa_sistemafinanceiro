@@ -3539,3 +3539,104 @@ body {
     color: var(--primary);
 }
 
+/* Saldos por Banco */
+.bank-balances-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--glass-shadow);
+}
+
+.bank-balances-section .section-header {
+    margin-bottom: 1.5rem;
+}
+
+.bank-balances-section .section-header h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.bank-balances-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.bank-balance-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s ease;
+}
+
+.bank-balance-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+}
+
+.bank-balance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.bank-balance-header h4 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.bank-balance-amount {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.bank-balance-amount.positive {
+    color: var(--revenue);
+}
+
+.bank-balance-amount.negative {
+    color: var(--expense);
+}
+
+.bank-balance-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.bank-balance-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.bank-balance-detail span:first-child {
+    color: var(--text-secondary);
+}
+
+.bank-balance-detail span:last-child {
+    font-weight: 600;
+}
+
+.bank-balance-detail .positive {
+    color: var(--revenue);
+}
+
+.bank-balance-detail .negative {
+    color: var(--expense);
+}
+
+.bank-balance-detail .neutral {
+    color: var(--text-primary);
+}
+
