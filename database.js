@@ -75,6 +75,11 @@ class Database {
                 )
             `);
 
+            await this.pool.query(`
+                ALTER TABLE financial_centers
+                ADD COLUMN IF NOT EXISTS banco TEXT DEFAULT ''
+            `);
+
             await this.createAdminUser();
         } catch (err) {
             console.error('Erro ao inicializar PostgreSQL:', err);
@@ -141,6 +146,24 @@ class Database {
         `, (err) => {
             if (err) {
                 console.error('Erro ao criar tabela financial_centers:', err);
+            } else {
+                this.db.all('PRAGMA table_info(financial_centers)', (pragmaErr, columns) => {
+                    if (pragmaErr) {
+                        console.error('Erro ao verificar colunas de financial_centers:', pragmaErr);
+                        return;
+                    }
+
+                    const hasBanco = Array.isArray(columns) && columns.some(col => col.name === 'banco');
+                    if (!hasBanco) {
+                        this.db.run('ALTER TABLE financial_centers ADD COLUMN banco TEXT DEFAULT ""', (alterErr) => {
+                            if (alterErr) {
+                                console.error('Erro ao adicionar coluna banco em financial_centers:', alterErr);
+                            } else {
+                                console.log('Coluna banco adicionada em financial_centers');
+                            }
+                        });
+                    }
+                });
             }
         });
     }
@@ -375,21 +398,22 @@ class Database {
             description = '',
             orcamento = 0,
             alertaPercentual = 90,
-            meta = 0
+            meta = 0,
+            banco = ''
         } = data;
         if (this.type === 'postgres') {
             this.pool.query(`
-                INSERT INTO financial_centers (user_id, name, type, balance, description, orcamento, alerta_percentual, meta)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                INSERT INTO financial_centers (user_id, name, type, balance, description, orcamento, alerta_percentual, meta, banco)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                 RETURNING id
-            `, [userId, name, type, balance, description, orcamento, alertaPercentual, meta])
+            `, [userId, name, type, balance, description, orcamento, alertaPercentual, meta, banco])
                 .then((res) => callback(null, res.rows[0].id))
                 .catch((err) => callback(err, null));
         } else {
             this.db.run(`
-                INSERT INTO financial_centers (user_id, name, type, balance, description, orcamento, alerta_percentual, meta)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            `, [userId, name, type, balance, description, orcamento, alertaPercentual, meta], function(err) {
+                INSERT INTO financial_centers (user_id, name, type, balance, description, orcamento, alerta_percentual, meta, banco)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `, [userId, name, type, balance, description, orcamento, alertaPercentual, meta, banco], function(err) {
                 callback(err, this ? this.lastID : null);
             });
         }
@@ -413,20 +437,21 @@ class Database {
             description = '',
             orcamento = 0,
             alertaPercentual = 90,
-            meta = 0
+            meta = 0,
+            banco = ''
         } = data;
         if (this.type === 'postgres') {
             this.pool.query(`
-                UPDATE financial_centers SET name = $1, type = $2, balance = $3, description = $4, orcamento = $5, alerta_percentual = $6, meta = $7
-                WHERE id = $8 AND user_id = $9
-            `, [name, type, balance, description, orcamento, alertaPercentual, meta, id, userId])
+                UPDATE financial_centers SET name = $1, type = $2, balance = $3, description = $4, orcamento = $5, alerta_percentual = $6, meta = $7, banco = $8
+                WHERE id = $9 AND user_id = $10
+            `, [name, type, balance, description, orcamento, alertaPercentual, meta, banco, id, userId])
                 .then(() => callback(null))
                 .catch(callback);
         } else {
             this.db.run(`
-                UPDATE financial_centers SET name = ?, type = ?, balance = ?, description = ?, orcamento = ?, alerta_percentual = ?, meta = ?
+                UPDATE financial_centers SET name = ?, type = ?, balance = ?, description = ?, orcamento = ?, alerta_percentual = ?, meta = ?, banco = ?
                 WHERE id = ? AND user_id = ?
-            `, [name, type, balance, description, orcamento, alertaPercentual, meta, id, userId], callback);
+            `, [name, type, balance, description, orcamento, alertaPercentual, meta, banco, id, userId], callback);
         }
     }
 

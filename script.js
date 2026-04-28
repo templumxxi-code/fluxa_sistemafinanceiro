@@ -151,7 +151,7 @@ function loadDataFromAPI() {
             date: item.date || item.data || '',
             descricao: item.descricao || item.description || '',
             description: item.description || item.descricao || '',
-            centroId: item.centroId || item.centro_id || 'default',
+            centroId: (item.centroId || item.centro_id || 'default').toString(),
             tipo: item.tipo || item.type || '',
             type: item.type || item.tipo || '',
             categoria: item.categoria || item.category || '',
@@ -176,7 +176,8 @@ function loadDataFromAPI() {
                 : center.alerta_percentual != null
                     ? parseFloat(center.alerta_percentual)
                     : 90,
-            meta: center.meta || 0
+            meta: center.meta || 0,
+            banco: center.banco || ''
         }));
 
         console.log('✅ Data organized:', {
@@ -208,7 +209,12 @@ function saveFinancialData(type, data) {
     return apiRequest('/api/financial-data', {
         method: 'POST',
         body: JSON.stringify(apiData)
-    }).then(res => res.json());
+    }).then(res => {
+        if (!res.ok) {
+            throw new Error('Erro na API: ' + res.status);
+        }
+        return res.json();
+    });
 }
 
 function updateFinancialData(id, type, data) {
@@ -224,12 +230,20 @@ function updateFinancialData(id, type, data) {
     return apiRequest(`/api/financial-data/${id}`, {
         method: 'PUT',
         body: JSON.stringify(apiData)
+    }).then(res => {
+        if (!res.ok) {
+            throw new Error('Erro na API: ' + res.status);
+        }
     });
 }
 
 function deleteFinancialData(id) {
     return apiRequest(`/api/financial-data/${id}`, {
         method: 'DELETE'
+    }).then(res => {
+        if (!res.ok) {
+            throw new Error('Erro na API: ' + res.status);
+        }
     });
 }
 
@@ -248,7 +262,12 @@ function saveCentroFinanceiro(data) {
     return apiRequest('/api/financial-centers', {
         method: 'POST',
         body: JSON.stringify(apiData)
-    }).then(res => res.json());
+    }).then(res => {
+        if (!res.ok) {
+            throw new Error('Erro na API: ' + res.status);
+        }
+        return res.json();
+    }).then(result => ({ ...data, id: result.id || data.id }));
 }
 
 function updateCentroFinanceiro(id, data) {
@@ -266,12 +285,21 @@ function updateCentroFinanceiro(id, data) {
     return apiRequest(`/api/financial-centers/${id}`, {
         method: 'PUT',
         body: JSON.stringify(apiData)
-    });
+    }).then(res => {
+        if (!res.ok) {
+            throw new Error('Erro na API: ' + res.status);
+        }
+        return res.json();
+    }).then(() => data);
 }
 
 function deleteCentroFinanceiro(id) {
     return apiRequest(`/api/financial-centers/${id}`, {
         method: 'DELETE'
+    }).then(res => {
+        if (!res.ok) {
+            throw new Error('Erro na API: ' + res.status);
+        }
     });
 }
 
@@ -294,7 +322,8 @@ function getDefaultCentroFinanceiro() {
         descricao: 'Centro financeiro principal',
         orcamento: 0,
         alertaPercentual: 90,
-        meta: 0
+        meta: 0,
+        banco: ''
     };
 }
 
@@ -1538,12 +1567,13 @@ function initializeForms() {
             updateCentroFinanceiro(id, centroData) :
             saveCentroFinanceiro(centroData);
 
-        savePromise.then(() => {
-            const existingIndex = appState.centrosFinanceiros.findIndex(c => c.id === centroData.id);
+        savePromise.then((savedCentro) => {
+            const centroToSave = savedCentro || centroData;
+            const existingIndex = appState.centrosFinanceiros.findIndex(c => c.id === centroToSave.id);
             if (existingIndex >= 0) {
-                appState.centrosFinanceiros[existingIndex] = centroData;
+                appState.centrosFinanceiros[existingIndex] = centroToSave;
             } else {
-                appState.centrosFinanceiros.push(centroData);
+                appState.centrosFinanceiros.push(centroToSave);
             }
 
             closeAllModals();
@@ -1754,6 +1784,24 @@ function getCenterMonthTotals(centroId, monthKey = getSelectedMonthKey()) {
     };
 }
 
+function getCenterTotals(centroId) {
+    const receitas = appState.receitas
+        .filter(r => r.centroId === centroId && r.data);
+    const despesas = appState.despesas
+        .filter(d => d.centroId === centroId && d.data);
+    const investimentos = appState.investimentos
+        .filter(inv => inv.centroId === centroId && inv.data);
+
+    return {
+        receitas,
+        despesas,
+        investimentos,
+        totalReceitas: receitas.reduce((sum, r) => sum + r.valor, 0),
+        totalDespesas: despesas.reduce((sum, d) => sum + d.valor, 0),
+        totalInvestido: investimentos.reduce((sum, inv) => sum + inv.valorInvestido, 0)
+    };
+}
+
 function backupDeletedCenters(centros) {
     if (!Array.isArray(centros) || !centros.length) return;
 
@@ -1798,8 +1846,8 @@ function updateBankBalances() {
             };
         }
 
-        // Calcular totais do mês atual para este centro
-        const { totalReceitas, totalDespesas, totalInvestido } = getCenterMonthTotals(centro.id, currentMonth);
+        // Calcular totais acumulados para este centro com base no banco do centro
+        const { totalReceitas, totalDespesas, totalInvestido } = getCenterTotals(centro.id);
         const saldo = totalReceitas - totalDespesas - totalInvestido;
 
         bankTotals[centro.banco].totalReceitas += totalReceitas;
@@ -2743,6 +2791,9 @@ function atualizarTabelaDespesasDetalhadas(despesasPorMesCategoria, meses, meses
             if (valor > 0) {
                 td.textContent = formatCurrencyInteger(valor);
                 td.style.color = 'var(--text-primary)';
+            } else if (valor === 0) {
+                td.textContent = formatCurrencyInteger(0);
+                td.style.color = 'var(--text-tertiary)';
             } else {
                 td.textContent = '-';
                 td.style.color = 'var(--text-tertiary)';
@@ -2758,6 +2809,9 @@ function atualizarTabelaDespesasDetalhadas(despesasPorMesCategoria, meses, meses
             tdInv.textContent = formatCurrencyInteger(valorInv);
             tdInv.style.color = '#14b8a6';
             tdInv.style.fontWeight = '600';
+        } else if (valorInv === 0) {
+            tdInv.textContent = formatCurrencyInteger(0);
+            tdInv.style.color = 'var(--text-tertiary)';
         } else {
             tdInv.textContent = '-';
             tdInv.style.color = 'var(--text-tertiary)';
