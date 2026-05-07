@@ -1411,9 +1411,7 @@ function initializeForms() {
             });
         }).catch(error => {
             console.error('Erro ao salvar despesa:', error);
-            alert('Erro ao salvar despesa: ' + (error.message || 'Erro desconhecido')
-            console.error('Erro ao salvar despesa:', error);
-            alert('Erro ao salvar despesa');
+            alert('Erro ao salvar despesa: ' + (error.message || 'Erro desconhecido'));
         });
     });
     
