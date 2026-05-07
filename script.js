@@ -1375,14 +1375,16 @@ function initializeForms() {
         };
 
         saveFinancialData('receita', receita).then(() => {
-            appState.receitas.push(receita);
-            closeAllModals();
-            e.target.reset();
-            updateDashboard();
-            renderReceitas();
+            // Recarregar dados da API para consistência
+            loadDataFromAPI().then(() => {
+                closeAllModals();
+                e.target.reset();
+                updateDashboard();
+                renderReceitas();
+            });
         }).catch(error => {
             console.error('Erro ao salvar receita:', error);
-            alert('Erro ao salvar receita');
+            alert('Erro ao salvar receita: ' + (error.message || 'Erro desconhecido'));
         });
     });
     
@@ -1399,15 +1401,17 @@ function initializeForms() {
             natureza: document.getElementById('despesaNatureza').value,
             valor: parseFloat(document.getElementById('despesaValor').value)
         };
-
-        saveFinancialData('despesa', despesa).then(() => {
-            appState.despesas.push(despesa);
-            closeAllModals();
-            e.target.reset();
-            updateDashboard();
-            renderAllData();
-            checkBudgetAlert();
+// Recarregar dados da API para consistência
+            loadDataFromAPI().then(() => {
+                closeAllModals();
+                e.target.reset();
+                updateDashboard();
+                renderAllData();
+                checkBudgetAlert();
+            });
         }).catch(error => {
+            console.error('Erro ao salvar despesa:', error);
+            alert('Erro ao salvar despesa: ' + (error.message || 'Erro desconhecido')
             console.error('Erro ao salvar despesa:', error);
             alert('Erro ao salvar despesa');
         });
@@ -1445,16 +1449,17 @@ function initializeForms() {
             saveFinancialData('investimento', investimento),
             saveFinancialData('despesa', despesaInvestimento)
         ]).then(() => {
-            appState.investimentos.push(investimento);
-            appState.despesas.push(despesaInvestimento);
-
-            closeAllModals();
-            e.target.reset();
-            updateDashboard();
-            renderInvestimentos();
+            // Não adicionar ao appState local - recarregar dados da API para garantir consistência
+            loadDataFromAPI().then(() => {
+                closeAllModals();
+                e.target.reset();
+                updateDashboard();
+                renderInvestimentos();
+                checkBudgetAlert();
+            });
         }).catch(error => {
             console.error('Erro ao salvar investimento:', error);
-            alert('Erro ao salvar investimento');
+            alert('Erro ao salvar investimento: ' + (error.message || 'Erro desconhecido'));
         });
     });
     
