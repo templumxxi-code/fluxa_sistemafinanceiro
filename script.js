@@ -1401,7 +1401,9 @@ function initializeForms() {
             natureza: document.getElementById('despesaNatureza').value,
             valor: parseFloat(document.getElementById('despesaValor').value)
         };
-// Recarregar dados da API para consistência
+
+        saveFinancialData('despesa', despesa).then(() => {
+            // Recarregar dados da API para consistência
             loadDataFromAPI().then(() => {
                 closeAllModals();
                 e.target.reset();
