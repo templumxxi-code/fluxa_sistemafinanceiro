@@ -52,11 +52,17 @@ class Database {
                     type TEXT NOT NULL,
                     category TEXT,
                     amount REAL NOT NULL,
+                    rendimento REAL DEFAULT 0,
                     date TEXT NOT NULL,
                     description TEXT,
                     centro_id TEXT DEFAULT 'default',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
+            `);
+
+            await this.pool.query(`
+                ALTER TABLE financial_data
+                ADD COLUMN IF NOT EXISTS rendimento REAL DEFAULT 0
             `);
 
             await this.pool.query(`
@@ -116,6 +122,7 @@ class Database {
                 type TEXT NOT NULL,
                 category TEXT,
                 amount REAL NOT NULL,
+                rendimento REAL DEFAULT 0,
                 date TEXT NOT NULL,
                 description TEXT,
                 centro_id TEXT DEFAULT 'default',
@@ -125,6 +132,24 @@ class Database {
         `, (err) => {
             if (err) {
                 console.error('Erro ao criar tabela financial_data:', err);
+            } else {
+                this.db.all('PRAGMA table_info(financial_data)', (pragmaErr, columns) => {
+                    if (pragmaErr) {
+                        console.error('Erro ao verificar colunas de financial_data:', pragmaErr);
+                        return;
+                    }
+
+                    const hasRendimento = Array.isArray(columns) && columns.some(col => col.name === 'rendimento');
+                    if (!hasRendimento) {
+                        this.db.run('ALTER TABLE financial_data ADD COLUMN rendimento REAL DEFAULT 0', (alterErr) => {
+                            if (alterErr) {
+                                console.error('Erro ao adicionar coluna rendimento em financial_data:', alterErr);
+                            } else {
+                                console.log('Coluna rendimento adicionada em financial_data');
+                            }
+                        });
+                    }
+                });
             }
         });
 
@@ -293,21 +318,21 @@ class Database {
     }
 
     createFinancialData(userId, data, callback) {
-        const { type, category, amount, date, description, centro_id = 'default' } = data;
+        const { type, category, amount, rendimento = 0, date, description, centro_id = 'default' } = data;
 
         if (this.type === 'postgres') {
             this.pool.query(`
-                INSERT INTO financial_data (user_id, type, category, amount, date, description, centro_id)
-                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                INSERT INTO financial_data (user_id, type, category, amount, rendimento, date, description, centro_id)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                 RETURNING id
-            `, [userId, type, category, amount, date, description, centro_id])
+            `, [userId, type, category, amount, rendimento, date, description, centro_id])
                 .then((res) => callback(null, res.rows[0].id))
                 .catch((err) => callback(err, null));
         } else {
             this.db.run(`
-                INSERT INTO financial_data (user_id, type, category, amount, date, description, centro_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            `, [userId, type, category, amount, date, description, centro_id], function(err) {
+                INSERT INTO financial_data (user_id, type, category, amount, rendimento, date, description, centro_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `, [userId, type, category, amount, rendimento, date, description, centro_id], function(err) {
                 callback(err, this ? this.lastID : null);
             });
         }
@@ -364,19 +389,19 @@ class Database {
     }
 
     updateFinancialData(id, userId, data, callback) {
-        const { type, category, amount, date, description, centro_id } = data;
+        const { type, category, amount, rendimento = 0, date, description, centro_id } = data;
         if (this.type === 'postgres') {
             this.pool.query(`
-                UPDATE financial_data SET type = $1, category = $2, amount = $3, date = $4, description = $5, centro_id = $6
-                WHERE id = $7 AND user_id = $8
-            `, [type, category, amount, date, description, centro_id, id, userId])
+                UPDATE financial_data SET type = $1, category = $2, amount = $3, rendimento = $4, date = $5, description = $6, centro_id = $7
+                WHERE id = $8 AND user_id = $9
+            `, [type, category, amount, rendimento, date, description, centro_id, id, userId])
                 .then(() => callback(null))
                 .catch(callback);
         } else {
             this.db.run(`
-                UPDATE financial_data SET type = ?, category = ?, amount = ?, date = ?, description = ?, centro_id = ?
+                UPDATE financial_data SET type = ?, category = ?, amount = ?, rendimento = ?, date = ?, description = ?, centro_id = ?
                 WHERE id = ? AND user_id = ?
-            `, [type, category, amount, date, description, centro_id, id, userId], callback);
+            `, [type, category, amount, rendimento, date, description, centro_id, id, userId], callback);
         }
     }
 

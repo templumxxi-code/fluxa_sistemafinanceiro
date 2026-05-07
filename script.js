@@ -144,40 +144,41 @@ function loadDataFromAPI() {
         // Validar que temos dados antes de processar
         if (!Array.isArray(financialData)) financialData = [];
         if (!Array.isArray(centers)) centers = [];
-
-        financialData = financialData.map(item => ({
-            ...item,
-            data: item.data || item.date || '',
-            date: item.date || item.data || '',
-            descricao: item.descricao || item.description || '',
-            description: item.description || item.descricao || '',
-            centroId: (item.centroId || item.centro_id || 'default').toString(),
-            tipo: item.tipo || item.type || '',
-            type: item.type || item.tipo || '',
-            categoria: item.categoria || item.category || '',
-            category: item.category || item.categoria || '',
-            valor: item.valor != null ? item.valor : item.amount != null ? item.amount : 0,
-            valorInvestido: item.valorInvestido != null ? item.valorInvestido : item.amount != null ? item.amount : 0
-        })).filter(item => item.data && item.data.trim() !== ''); // Filtrar itens sem data válida
         
         // Organize financial data by type
-        appState.receitas = financialData.filter(item => item.type === 'receita');
-        appState.despesas = financialData.filter(item => item.type === 'despesa');
-        appState.investimentos = financialData.filter(item => item.type === 'investimento');
+        appState.receitas = financialData
+            .filter(item => item.type === 'receita')
+            .map(item => ({
+                ...item,
+                valor: parseFloat(item.amount ?? item.valor) || 0,
+                categoria: item.category || item.categoria || 'outros',
+                centroId: item.centro_id || item.centroId || 'default'
+            }));
+        appState.despesas = financialData
+            .filter(item => item.type === 'despesa')
+            .map(item => ({
+                ...item,
+                valor: parseFloat(item.amount ?? item.valor) || 0,
+                categoria: item.category || item.categoria || 'outros',
+                tipo: item.tipo || item.category || item.recorrencia || 'eventual',
+                natureza: item.natureza || item.natureza || 'variavel',
+                centroId: item.centro_id || item.centroId || 'default'
+            }));
+        appState.investimentos = financialData
+            .filter(item => item.type === 'investimento')
+            .map(item => ({
+                ...item,
+                valorInvestido: parseFloat(item.amount ?? item.valor) || 0,
+                rendimento: parseFloat(item.rendimento ?? 0) || 0,
+                tipo: item.category || item.tipo || 'outros',
+                categoria: item.category || item.categoria || 'outros',
+                centroId: item.centro_id || item.centroId || 'default'
+            }));
         appState.centrosFinanceiros = centers.map(center => ({
             id: center.id.toString(),
-            nome: center.name || center.nome,
+            nome: center.name,
             type: center.type,
-            balance: center.balance,
-            descricao: center.description || center.descricao || '',
-            orcamento: center.orcamento != null ? parseFloat(center.orcamento) : 0,
-            alertaPercentual: center.alertaPercentual != null
-                ? parseFloat(center.alertaPercentual)
-                : center.alerta_percentual != null
-                    ? parseFloat(center.alerta_percentual)
-                    : 90,
-            meta: center.meta || 0,
-            banco: center.banco || ''
+            balance: center.balance
         }));
 
         console.log('✅ Data organized:', {
@@ -198,9 +199,10 @@ function loadDataFromAPI() {
 
 function saveFinancialData(type, data) {
     const apiData = {
-        type: type,
-        category: data.categoria || data.category,
-        amount: parseFloat(data.valor || data.amount),
+        type,
+        category: data.tipo || data.categoria || data.category,
+        amount: parseFloat(String(data.valorInvestido ?? data.valor ?? data.amount).replace(',', '.')) || 0,
+        rendimento: parseFloat(String(data.rendimento ?? 0).replace(',', '.')) || 0,
         date: data.data,
         description: data.descricao || data.description,
         centro_id: data.centroId || 'default'
@@ -211,7 +213,9 @@ function saveFinancialData(type, data) {
         body: JSON.stringify(apiData)
     }).then(res => {
         if (!res.ok) {
-            throw new Error('Erro na API: ' + res.status);
+            return res.json().then(err => {
+                throw new Error(err.error || 'Erro ao salvar dados');
+            });
         }
         return res.json();
     });
@@ -219,9 +223,10 @@ function saveFinancialData(type, data) {
 
 function updateFinancialData(id, type, data) {
     const apiData = {
-        type: type,
-        category: data.categoria || data.category,
-        amount: parseFloat(data.valor || data.amount),
+        type,
+        category: data.tipo || data.categoria || data.category,
+        amount: parseFloat(String(data.valorInvestido ?? data.valor ?? data.amount).replace(',', '.')) || 0,
+        rendimento: parseFloat(String(data.rendimento ?? 0).replace(',', '.')) || 0,
         date: data.data,
         description: data.descricao || data.description,
         centro_id: data.centroId || 'default'
@@ -232,18 +237,17 @@ function updateFinancialData(id, type, data) {
         body: JSON.stringify(apiData)
     }).then(res => {
         if (!res.ok) {
-            throw new Error('Erro na API: ' + res.status);
+            return res.json().then(err => {
+                throw new Error(err.error || 'Erro ao atualizar dados');
+            });
         }
+        return res.json();
     });
 }
 
 function deleteFinancialData(id) {
     return apiRequest(`/api/financial-data/${id}`, {
         method: 'DELETE'
-    }).then(res => {
-        if (!res.ok) {
-            throw new Error('Erro na API: ' + res.status);
-        }
     });
 }
 
@@ -251,55 +255,31 @@ function saveCentroFinanceiro(data) {
     const apiData = {
         name: data.nome,
         type: data.type || 'conta',
-        balance: data.balance || 0,
-        description: data.descricao || '',
-        orcamento: data.orcamento || 0,
-        alertaPercentual: data.alertaPercentual || 90,
-        meta: data.meta || 0,
-        banco: data.banco || ''
+        balance: data.balance || 0
     };
 
     return apiRequest('/api/financial-centers', {
         method: 'POST',
         body: JSON.stringify(apiData)
-    }).then(res => {
-        if (!res.ok) {
-            throw new Error('Erro na API: ' + res.status);
-        }
-        return res.json();
-    }).then(result => ({ ...data, id: result.id || data.id }));
+    }).then(res => res.json());
 }
 
 function updateCentroFinanceiro(id, data) {
     const apiData = {
         name: data.nome,
         type: data.type,
-        balance: data.balance,
-        description: data.descricao || '',
-        orcamento: data.orcamento || 0,
-        alertaPercentual: data.alertaPercentual || 90,
-        meta: data.meta || 0,
-        banco: data.banco || ''
+        balance: data.balance
     };
 
     return apiRequest(`/api/financial-centers/${id}`, {
         method: 'PUT',
         body: JSON.stringify(apiData)
-    }).then(res => {
-        if (!res.ok) {
-            throw new Error('Erro na API: ' + res.status);
-        }
-        return res.json();
-    }).then(() => data);
+    });
 }
 
 function deleteCentroFinanceiro(id) {
     return apiRequest(`/api/financial-centers/${id}`, {
         method: 'DELETE'
-    }).then(res => {
-        if (!res.ok) {
-            throw new Error('Erro na API: ' + res.status);
-        }
     });
 }
 
@@ -322,8 +302,7 @@ function getDefaultCentroFinanceiro() {
         descricao: 'Centro financeiro principal',
         orcamento: 0,
         alertaPercentual: 90,
-        meta: 0,
-        banco: ''
+        meta: 0
     };
 }
 
@@ -401,7 +380,11 @@ function loadFromLocalStorage() {
             const centroValido = investimento.centroId && appState.centrosFinanceiros.some(c => c.id === investimento.centroId);
             return {
                 ...investimento,
-                centroId: centroValido ? investimento.centroId : defaultCentroId
+                centroId: centroValido ? investimento.centroId : defaultCentroId,
+                valorInvestido: investimento.valorInvestido ?? investimento.valor ?? 0,
+                rendimento: investimento.rendimento ?? 0,
+                tipo: investimento.tipo || investimento.categoria || 'outros',
+                categoria: investimento.categoria || investimento.tipo || 'outros'
             };
         });
 
@@ -1382,14 +1365,9 @@ function initializeForms() {
     // Form Receita
     document.getElementById('formReceita').addEventListener('submit', (e) => {
         e.preventDefault();
-        const dataValue = document.getElementById('receitaData').value;
-        if (!dataValue) {
-            alert('Por favor, selecione uma data para a receita.');
-            return;
-        }
         const receita = {
             id: Date.now(),
-            data: dataValue,
+            data: document.getElementById('receitaData').value,
             descricao: document.getElementById('receitaDescricao').value,
             centroId: document.getElementById('receitaCentro').value,
             categoria: document.getElementById('receitaTipo').value,
@@ -1411,14 +1389,9 @@ function initializeForms() {
     // Form Despesa
     document.getElementById('formDespesa').addEventListener('submit', (e) => {
         e.preventDefault();
-        const dataValue = document.getElementById('despesaData').value;
-        if (!dataValue) {
-            alert('Por favor, selecione uma data para a despesa.');
-            return;
-        }
         const despesa = {
             id: Date.now(),
-            data: dataValue,
+            data: document.getElementById('despesaData').value,
             descricao: document.getElementById('despesaDescricao').value,
             centroId: document.getElementById('despesaCentro').value,
             categoria: document.getElementById('despesaCategoria').value,
@@ -1443,20 +1416,16 @@ function initializeForms() {
     // Form Investimento
     document.getElementById('formInvestimento').addEventListener('submit', (e) => {
         e.preventDefault();
-        const dataValue = document.getElementById('investimentoData').value;
-        if (!dataValue) {
-            alert('Por favor, selecione uma data para o investimento.');
-            return;
-        }
         const despesaId = Date.now() + 1;
         const investimento = {
             id: Date.now(),
-            data: dataValue,
+            data: document.getElementById('investimentoData').value,
             descricao: document.getElementById('investimentoDescricao').value,
             centroId: document.getElementById('investimentoCentro').value,
+            tipo: document.getElementById('investimentoTipo').value,
             categoria: document.getElementById('investimentoTipo').value,
-            valor: parseFloat(document.getElementById('investimentoValor').value),
-            rendimento: parseFloat(document.getElementById('investimentoRendimento').value) || 0,
+            valorInvestido: parseFloat(String(document.getElementById('investimentoValor').value).replace(',', '.')) || 0,
+            rendimento: parseFloat(String(document.getElementById('investimentoRendimento').value).replace(',', '.')) || 0,
             despesaId
         };
 
@@ -1469,7 +1438,7 @@ function initializeForms() {
             categoria: 'investimentos',
             tipo: 'eventual',
             natureza: 'variavel',
-            valor: investimento.valor
+            valor: investimento.valorInvestido
         };
 
         Promise.all([
@@ -1548,7 +1517,6 @@ function initializeForms() {
         const centroData = {
             id: id || `centro-${Date.now()}`,
             nome: document.getElementById('centroNome').value.trim(),
-            banco: document.getElementById('centroBanco').value,
             descricao: document.getElementById('centroDescricao').value.trim(),
             orcamento: parseFloat(document.getElementById('centroOrcamento').value) || 0,
             alertaPercentual: parseFloat(document.getElementById('centroAlertaPercentual').value) || 90,
@@ -1558,22 +1526,17 @@ function initializeForms() {
             alert('Nome do centro é obrigatório.');
             return;
         }
-        if (!centroData.banco) {
-            alert('Banco é obrigatório.');
-            return;
-        }
 
         const savePromise = id ?
             updateCentroFinanceiro(id, centroData) :
             saveCentroFinanceiro(centroData);
 
-        savePromise.then((savedCentro) => {
-            const centroToSave = savedCentro || centroData;
-            const existingIndex = appState.centrosFinanceiros.findIndex(c => c.id === centroToSave.id);
+        savePromise.then(() => {
+            const existingIndex = appState.centrosFinanceiros.findIndex(c => c.id === centroData.id);
             if (existingIndex >= 0) {
-                appState.centrosFinanceiros[existingIndex] = centroToSave;
+                appState.centrosFinanceiros[existingIndex] = centroData;
             } else {
-                appState.centrosFinanceiros.push(centroToSave);
+                appState.centrosFinanceiros.push(centroData);
             }
 
             closeAllModals();
@@ -1761,9 +1724,6 @@ function updateDashboard() {
     
     // Atualizar Resumo Mensal
     updateMonthlySummary();
-
-    // Atualizar Saldos por Banco
-    updateBankBalances();
 }
 
 function getCenterMonthTotals(centroId, monthKey = getSelectedMonthKey()) {
@@ -1781,24 +1741,6 @@ function getCenterMonthTotals(centroId, monthKey = getSelectedMonthKey()) {
         totalReceitas: receitasMes.reduce((sum, r) => sum + r.valor, 0),
         totalDespesas: despesasMes.reduce((sum, d) => sum + d.valor, 0),
         totalInvestido: investimentosMes.reduce((sum, inv) => sum + inv.valorInvestido, 0)
-    };
-}
-
-function getCenterTotals(centroId) {
-    const receitas = appState.receitas
-        .filter(r => r.centroId === centroId && r.data);
-    const despesas = appState.despesas
-        .filter(d => d.centroId === centroId && d.data);
-    const investimentos = appState.investimentos
-        .filter(inv => inv.centroId === centroId && inv.data);
-
-    return {
-        receitas,
-        despesas,
-        investimentos,
-        totalReceitas: receitas.reduce((sum, r) => sum + r.valor, 0),
-        totalDespesas: despesas.reduce((sum, d) => sum + d.valor, 0),
-        totalInvestido: investimentos.reduce((sum, inv) => sum + inv.valorInvestido, 0)
     };
 }
 
@@ -1826,95 +1768,19 @@ function backupDeletedCenters(centros) {
     }
 }
 
-function updateBankBalances() {
-    const bankBalancesGrid = document.getElementById('bankBalancesGrid');
-    if (!bankBalancesGrid) return;
-
-    // Agrupar centros por banco
-    const bankTotals = {};
-    const currentMonth = getSelectedMonthKey();
-
-    appState.centrosFinanceiros.forEach(centro => {
-        if (!centro.banco) return;
-
-        if (!bankTotals[centro.banco]) {
-            bankTotals[centro.banco] = {
-                totalReceitas: 0,
-                totalDespesas: 0,
-                totalInvestido: 0,
-                saldo: 0
-            };
-        }
-
-        // Calcular totais acumulados para este centro com base no banco do centro
-        const { totalReceitas, totalDespesas, totalInvestido } = getCenterTotals(centro.id);
-        const saldo = totalReceitas - totalDespesas - totalInvestido;
-
-        bankTotals[centro.banco].totalReceitas += totalReceitas;
-        bankTotals[centro.banco].totalDespesas += totalDespesas;
-        bankTotals[centro.banco].totalInvestido += totalInvestido;
-        bankTotals[centro.banco].saldo += saldo;
-    });
-
-    // Renderizar os cards de saldo por banco
-    bankBalancesGrid.innerHTML = '';
-
-    if (Object.keys(bankTotals).length === 0) {
-        bankBalancesGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Nenhum centro financeiro com banco cadastrado ainda.</p>';
-        return;
-    }
-
-    Object.entries(bankTotals).forEach(([banco, totals]) => {
-        const bankCard = document.createElement('div');
-        bankCard.className = 'bank-balance-card';
-        bankCard.innerHTML = `
-            <div class="bank-balance-header">
-                <h4>${banco}</h4>
-                <span class="bank-balance-amount ${totals.saldo >= 0 ? 'positive' : 'negative'}">
-                    ${formatCurrencyInteger(totals.saldo)}
-                </span>
-            </div>
-            <div class="bank-balance-details">
-                <div class="bank-balance-detail">
-                    <span>Receitas:</span>
-                    <span class="positive">${formatCurrencyInteger(totals.totalReceitas)}</span>
-                </div>
-                <div class="bank-balance-detail">
-                    <span>Despesas:</span>
-                    <span class="negative">${formatCurrencyInteger(totals.totalDespesas)}</span>
-                </div>
-                <div class="bank-balance-detail">
-                    <span>Investimentos:</span>
-                    <span class="neutral">${formatCurrencyInteger(totals.totalInvestido)}</span>
-                </div>
-            </div>
-        `;
-        bankBalancesGrid.appendChild(bankCard);
-    });
-}
-
 function clearAllCenters() {
     const confirmed = confirm('Tem certeza de que deseja apagar todos os centros financeiros? Essa ação não removerá receitas, despesas ou investimentos, apenas os registros de centros.');
     if (!confirmed) return;
 
-    // Deletar todos os centros do servidor
-    const deletePromises = appState.centrosFinanceiros.map(centro => deleteCentroFinanceiro(centro.id));
-
-    Promise.all(deletePromises).then(() => {
-        // Se todos foram deletados com sucesso do servidor, limpar o estado local
-        backupDeletedCenters(appState.centrosFinanceiros);
-        appState.centrosFinanceiros = [];
-        appState.selectedCentroId = 'all';
-        saveToLocalStorage();
-        populateCenterSelectors();
-        renderCentros();
-        updateDashboard();
-        updateUndoButtonState();
-        alert('Todos os centros financeiros foram apagados. Você pode desfazer a exclusão usando o botão de desfazer.');
-    }).catch(error => {
-        console.error('Erro ao deletar todos os centros:', error);
-        alert('Erro ao apagar centros financeiros');
-    });
+    backupDeletedCenters(appState.centrosFinanceiros);
+    appState.centrosFinanceiros = [];
+    appState.selectedCentroId = 'all';
+    saveToLocalStorage();
+    populateCenterSelectors();
+    renderCentros();
+    updateDashboard();
+    updateUndoButtonState();
+    alert('Todos os centros financeiros foram apagados. Você pode desfazer a exclusão usando o botão de desfazer.');
 }
 
 function clearUnusedCenters() {
@@ -1933,27 +1799,18 @@ function clearUnusedCenters() {
     const confirmed = confirm(`Encontrados ${unusedCenters.length} centro(s) sem transações. Deseja removê-los?`);
     if (!confirmed) return;
 
-    // Deletar cada centro do servidor
-    const deletePromises = unusedCenters.map(centro => deleteCentroFinanceiro(centro.id));
+    backupDeletedCenters(unusedCenters);
+    appState.centrosFinanceiros = appState.centrosFinanceiros.filter(c => usedIds.has(c.id));
+    if (!appState.centrosFinanceiros.some(c => c.id === appState.selectedCentroId)) {
+        appState.selectedCentroId = 'all';
+    }
 
-    Promise.all(deletePromises).then(() => {
-        // Se todos foram deletados com sucesso do servidor, remover do estado local
-        backupDeletedCenters(unusedCenters);
-        appState.centrosFinanceiros = appState.centrosFinanceiros.filter(c => usedIds.has(c.id));
-        if (!appState.centrosFinanceiros.some(c => c.id === appState.selectedCentroId)) {
-            appState.selectedCentroId = 'all';
-        }
-
-        saveToLocalStorage();
-        populateCenterSelectors();
-        renderCentros();
-        updateDashboard();
-        updateUndoButtonState();
-        alert(`${unusedCenters.length} centro(s) sem transações foram removidos. Você pode desfazer a exclusão se precisar.`);
-    }).catch(error => {
-        console.error('Erro ao deletar centros não usados:', error);
-        alert('Erro ao remover centros não usados');
-    });
+    saveToLocalStorage();
+    populateCenterSelectors();
+    renderCentros();
+    updateDashboard();
+    updateUndoButtonState();
+    alert(`${unusedCenters.length} centro(s) sem transações foram removidos. Você pode desfazer a exclusão se precisar.`);
 }
 
 function undoLastCenterDeletion() {
@@ -1968,94 +1825,25 @@ function undoLastCenterDeletion() {
         return;
     }
 
-    // Recriar o centro no servidor primeiro
     if (backup.centro) {
-        const centroData = {
-            nome: backup.centro.nome,
-            banco: backup.centro.banco || '',
-            descricao: backup.centro.descricao || '',
-            orcamento: backup.centro.orcamento || 0,
-            alertaPercentual: backup.centro.alertaPercentual || 90,
-            meta: backup.centro.meta || 0
-        };
-
-        saveCentroFinanceiro(centroData).then((savedCentro) => {
-            // Atualizar o ID do centro restaurado
-            const restoredCentro = { ...backup.centro, id: savedCentro.id.toString() };
-
-            // Recriar as transações vinculadas ao centro
-            const recreatePromises = [];
-
-            if (Array.isArray(backup.receitas)) {
-                backup.receitas.forEach(receita => {
-                    const receitaData = {
-                        data: receita.data,
-                        descricao: receita.descricao,
-                        centroId: restoredCentro.id,
-                        categoria: receita.categoria,
-                        valor: receita.valor
-                    };
-                    recreatePromises.push(saveFinancialData('receita', receitaData));
-                });
-            }
-
-            if (Array.isArray(backup.despesas)) {
-                backup.despesas.forEach(despesa => {
-                    const despesaData = {
-                        data: despesa.data,
-                        descricao: despesa.descricao,
-                        centroId: restoredCentro.id,
-                        categoria: despesa.categoria,
-                        tipo: despesa.tipo,
-                        natureza: despesa.natureza,
-                        valor: despesa.valor
-                    };
-                    recreatePromises.push(saveFinancialData('despesa', despesaData));
-                });
-            }
-
-            if (Array.isArray(backup.investimentos)) {
-                backup.investimentos.forEach(investimento => {
-                    const investimentoData = {
-                        data: investimento.data,
-                        descricao: investimento.descricao,
-                        centroId: restoredCentro.id,
-                        categoria: investimento.categoria,
-                        valor: investimento.valor,
-                        rendimento: investimento.rendimento || 0
-                    };
-                    recreatePromises.push(saveFinancialData('investimento', investimentoData));
-                });
-            }
-
-            Promise.all(recreatePromises).then(() => {
-                // Se tudo foi recriado com sucesso, restaurar no estado local
-                appState.centrosFinanceiros.push(restoredCentro);
-                if (Array.isArray(backup.receitas)) {
-                    appState.receitas.push(...backup.receitas);
-                }
-                if (Array.isArray(backup.despesas)) {
-                    appState.despesas.push(...backup.despesas);
-                }
-                if (Array.isArray(backup.investimentos)) {
-                    appState.investimentos.push(...backup.investimentos);
-                }
-
-                saveToLocalStorage();
-                populateCenterSelectors();
-                renderCentros();
-                updateDashboard();
-                updateUndoButtonState();
-                alert('Última exclusão de centro foi desfeita.');
-            }).catch(error => {
-                console.error('Erro ao recriar transações:', error);
-                alert('Erro ao desfazer exclusão - centro foi restaurado, mas algumas transações podem não ter sido.');
-            });
-        }).catch(error => {
-            console.error('Erro ao recriar centro:', error);
-            alert('Erro ao desfazer exclusão do centro.');
-        });
+        appState.centrosFinanceiros.push(backup.centro);
     }
+    if (Array.isArray(backup.receitas)) {
+        appState.receitas.push(...backup.receitas);
+    }
+    if (Array.isArray(backup.despesas)) {
+        appState.despesas.push(...backup.despesas);
+    }
+    if (Array.isArray(backup.investimentos)) {
+        appState.investimentos.push(...backup.investimentos);
+    }
+
+    saveToLocalStorage();
+    populateCenterSelectors();
+    renderCentros();
+    updateDashboard();
+    updateUndoButtonState();
+    alert('Última exclusão de centro foi desfeita.');
 }
 
 function updateUndoButtonState() {
@@ -2142,35 +1930,29 @@ function updateMonthlySummary() {
     
     // Processar receitas
     filterBySelectedCentro(appState.receitas).forEach(r => {
-        const date = r.data || r.date;
-        if (!date || typeof date !== 'string' || date.length < 7) return;
-        const mes = date.substring(0, 7); // YYYY-MM
+        const mes = r.data.substring(0, 7); // YYYY-MM
         if (!monthlyData[mes]) {
             monthlyData[mes] = { receitas: 0, despesas: 0, investimentos: 0 };
         }
-        monthlyData[mes].receitas += r.valor || 0;
+        monthlyData[mes].receitas += r.valor;
     });
     
     // Processar despesas
     filterBySelectedCentro(appState.despesas).forEach(d => {
-        const date = d.data || d.date;
-        if (!date || typeof date !== 'string' || date.length < 7) return;
-        const mes = date.substring(0, 7); // YYYY-MM
+        const mes = d.data.substring(0, 7); // YYYY-MM
         if (!monthlyData[mes]) {
             monthlyData[mes] = { receitas: 0, despesas: 0, investimentos: 0 };
         }
-        monthlyData[mes].despesas += d.valor || 0;
+        monthlyData[mes].despesas += d.valor;
     });
     
     // Processar investimentos
     filterBySelectedCentro(appState.investimentos).forEach(inv => {
-        const date = inv.data || inv.date;
-        if (!date || typeof date !== 'string' || date.length < 7) return;
-        const mes = date.substring(0, 7); // YYYY-MM
+        const mes = inv.data.substring(0, 7); // YYYY-MM
         if (!monthlyData[mes]) {
             monthlyData[mes] = { receitas: 0, despesas: 0, investimentos: 0 };
         }
-        monthlyData[mes].investimentos += inv.valorInvestido || 0;
+        monthlyData[mes].investimentos += inv.valorInvestido;
     });
     
     // Ordenar meses (mais recente primeiro)
@@ -2203,9 +1985,9 @@ function updateMonthlySummary() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="month-cell">${mesFormatado}</td>
-            <td>${formatCurrencyInteger(totalSaido)}</td>
-            <td class="${sobrasClass}">${formatCurrencyInteger(sobras)}</td>
-            <td class="${percentualClass}">${formatPercent(sobrasPercentual)}</td>
+            <td>${formatCurrency(totalSaido)}</td>
+            <td class="${sobrasClass}">${formatCurrency(sobras)}</td>
+            <td class="${percentualClass}">${sobrasPercentual.toFixed(1)}%</td>
         `;
         tbody.appendChild(tr);
     });
@@ -2789,11 +2571,8 @@ function atualizarTabelaDespesasDetalhadas(despesasPorMesCategoria, meses, meses
             totalDespesas += valor;
             
             if (valor > 0) {
-                td.textContent = formatCurrencyInteger(valor);
+                td.textContent = formatCurrency(valor);
                 td.style.color = 'var(--text-primary)';
-            } else if (valor === 0) {
-                td.textContent = formatCurrencyInteger(0);
-                td.style.color = 'var(--text-tertiary)';
             } else {
                 td.textContent = '-';
                 td.style.color = 'var(--text-tertiary)';
@@ -2806,12 +2585,9 @@ function atualizarTabelaDespesasDetalhadas(despesasPorMesCategoria, meses, meses
         const tdInv = document.createElement('td');
         const valorInv = despesasPorMesCategoria[mes]['investimentos'] || 0;
         if (valorInv > 0) {
-            tdInv.textContent = formatCurrencyInteger(valorInv);
+            tdInv.textContent = formatCurrency(valorInv);
             tdInv.style.color = '#14b8a6';
             tdInv.style.fontWeight = '600';
-        } else if (valorInv === 0) {
-            tdInv.textContent = formatCurrencyInteger(0);
-            tdInv.style.color = 'var(--text-tertiary)';
         } else {
             tdInv.textContent = '-';
             tdInv.style.color = 'var(--text-tertiary)';
@@ -2823,7 +2599,7 @@ function atualizarTabelaDespesasDetalhadas(despesasPorMesCategoria, meses, meses
         // Coluna de total
         const tdTotal = document.createElement('td');
         const totalMes = totalDespesas + valorInv;
-        tdTotal.textContent = formatCurrencyInteger(totalMes);
+        tdTotal.textContent = formatCurrency(totalMes);
         tdTotal.style.textAlign = 'right';
         tdTotal.style.fontWeight = '700';
         tdTotal.style.color = '#ef4444';
@@ -2859,7 +2635,7 @@ function renderReceitas() {
             <td>${formatDate(receita.data)}</td>
             <td>${receita.descricao}</td>
             <td>${capitalize(receita.tipo)}</td>
-            <td style="color: var(--revenue); font-weight: 600;">${formatCurrencyInteger(receita.valor)}</td>
+            <td style="color: var(--revenue); font-weight: 600;">${formatCurrency(receita.valor)}</td>
             <td>
                 <button class="action-btn edit" onclick="editItem('receitas', ${receita.id})" title="Editar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3043,7 +2819,7 @@ function renderDespesas() {
             <td>${capitalize(despesa.categoria)}</td>
             <td><span class="badge badge-${despesa.tipo}">${capitalize(despesa.tipo)}</span></td>
             <td><span class="badge badge-${despesa.natureza || 'variavel'}">${capitalize(despesa.natureza || 'variável')}</span></td>
-            <td style="color: var(--expense); font-weight: 600;">${formatCurrencyInteger(despesa.valor)}</td>
+            <td style="color: var(--expense); font-weight: 600;">${formatCurrency(despesa.valor)}</td>
             <td>
                 <button class="action-btn edit" onclick="editItem('despesas', ${despesa.id})" title="Editar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3212,11 +2988,11 @@ function renderInvestimentos() {
             <td>${formatDate(inv.data)}</td>
             <td>${inv.descricao}</td>
             <td>${capitalize(inv.tipo.replace('_', ' '))}</td>
-            <td>${formatCurrencyInteger(inv.valorInvestido)}</td>
+            <td>${formatCurrency(inv.valorInvestido)}</td>
             <td style="color: ${inv.rendimento >= 0 ? 'var(--success)' : 'var(--expense)'}; font-weight: 600;">
-                ${formatCurrencyInteger(inv.rendimento)}
+                ${formatCurrency(inv.rendimento)}
             </td>
-            <td style="font-weight: 600;">${formatCurrencyInteger(valorAtual)}</td>
+            <td style="font-weight: 600;">${formatCurrency(valorAtual)}</td>
             <td>
                 <button class="action-btn edit" onclick="editItem('investimentos', ${inv.id})" title="Editar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3711,9 +3487,8 @@ function renderCentros() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${capitalize(centro.nome)}</td>
-            <td>${centro.banco || '—'}</td>
             <td>${centro.descricao || '—'}</td>
-            <td>${centro.orcamento > 0 ? formatCurrencyInteger(centro.orcamento) : 'Automático'}</td>
+            <td>${centro.orcamento > 0 ? formatCurrency(centro.orcamento) : 'Automático'}</td>
             <td>${centro.alertaPercentual}%</td>
             <td>
                 <button class="action-btn edit" onclick="editCentro('${centro.id}')" title="Editar">
@@ -3741,7 +3516,6 @@ function editCentro(id) {
     document.getElementById('modalCentroTitle').textContent = 'Editar Centro Financeiro';
     document.getElementById('centroId').value = centro.id;
     document.getElementById('centroNome').value = centro.nome;
-    document.getElementById('centroBanco').value = centro.banco || '';
     document.getElementById('centroDescricao').value = centro.descricao || '';
     document.getElementById('centroOrcamento').value = centro.orcamento || '';
     document.getElementById('centroAlertaPercentual').value = centro.alertaPercentual || 90;
@@ -3753,26 +3527,19 @@ function deleteCentro(id) {
     const centro = appState.centrosFinanceiros.find(c => c.id === id);
     if (!centro) return;
 
-    // Primeiro deletar do servidor
-    deleteCentroFinanceiro(id).then(() => {
-        // Se deletou com sucesso do servidor, então remover do estado local
-        backupDeletedCenters([centro]);
-        appState.centrosFinanceiros = appState.centrosFinanceiros.filter(c => c.id !== id);
-        appState.receitas = appState.receitas.filter(r => r.centroId !== id);
-        appState.despesas = appState.despesas.filter(d => d.centroId !== id);
-        appState.investimentos = appState.investimentos.filter(i => i.centroId !== id);
+    backupDeletedCenters([centro]);
+    appState.centrosFinanceiros = appState.centrosFinanceiros.filter(c => c.id !== id);
+    appState.receitas = appState.receitas.filter(r => r.centroId !== id);
+    appState.despesas = appState.despesas.filter(d => d.centroId !== id);
+    appState.investimentos = appState.investimentos.filter(i => i.centroId !== id);
 
-        if (appState.selectedCentroId === id) {
-            appState.selectedCentroId = 'all';
-        }
-        saveToLocalStorage();
-        updateUndoButtonState();
-        updateDashboard();
-        renderAllData();
-    }).catch(error => {
-        console.error('Erro ao deletar centro:', error);
-        alert('Erro ao deletar centro financeiro');
-    });
+    if (appState.selectedCentroId === id) {
+        appState.selectedCentroId = 'all';
+    }
+    saveToLocalStorage();
+    updateUndoButtonState();
+    updateDashboard();
+    renderAllData();
 }
 
 // Exportar Relatórios
@@ -4262,27 +4029,8 @@ function formatCurrency(value) {
     }).format(value);
 }
 
-function formatCurrencyInteger(value) {
-    // Para tabelas, mostrar apenas valores inteiros (sem centavos)
-    return 'R$ ' + Math.round(value).toLocaleString('pt-BR');
-}
-
-function formatPercent(value) {
-    // Garante que porcentagens sempre mostrem o símbolo %
-    return Math.round(value) + '%';
-}
-
-function formatPercentDecimal(value) {
-    // Para casos onde decimais são necessários (gráficos, tooltips)
-    return value.toFixed(1) + '%';
-}
-
 function formatDate(dateString) {
-    if (!dateString || typeof dateString !== 'string') return '';
-    const parts = dateString.split('-');
-    if (parts.length !== 3) return '';
-    const [year, month, day] = parts;
-    if (!year || !month || !day) return '';
+    const [year, month, day] = dateString.split('-');
     return `${day}/${month}/${year}`;
 }
 
