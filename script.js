@@ -150,6 +150,8 @@ function loadDataFromAPI() {
             .filter(item => item.type === 'receita')
             .map(item => ({
                 ...item,
+                data: item.date || item.data,
+                descricao: item.descricao || item.description,
                 valor: parseFloat(item.amount ?? item.valor) || 0,
                 categoria: item.category || item.categoria || 'outros',
                 centroId: item.centro_id || item.centroId || 'default'
@@ -158,6 +160,8 @@ function loadDataFromAPI() {
             .filter(item => item.type === 'despesa')
             .map(item => ({
                 ...item,
+                data: item.date || item.data,
+                descricao: item.descricao || item.description,
                 valor: parseFloat(item.amount ?? item.valor) || 0,
                 categoria: item.category || item.categoria || 'outros',
                 tipo: item.tipo || item.category || item.recorrencia || 'eventual',
@@ -168,6 +172,8 @@ function loadDataFromAPI() {
             .filter(item => item.type === 'investimento')
             .map(item => ({
                 ...item,
+                data: item.date || item.data,
+                descricao: item.descricao || item.description,
                 valorInvestido: parseFloat(item.amount ?? item.valor) || 0,
                 rendimento: parseFloat(item.rendimento ?? 0) || 0,
                 tipo: item.category || item.tipo || 'outros',
@@ -203,7 +209,7 @@ function saveFinancialData(type, data) {
         category: data.tipo || data.categoria || data.category,
         amount: parseFloat(String(data.valorInvestido ?? data.valor ?? data.amount).replace(',', '.')) || 0,
         rendimento: parseFloat(String(data.rendimento ?? 0).replace(',', '.')) || 0,
-        date: data.data,
+        date: data.data || data.date,
         description: data.descricao || data.description,
         centro_id: data.centroId || 'default'
     };
@@ -227,7 +233,7 @@ function updateFinancialData(id, type, data) {
         category: data.tipo || data.categoria || data.category,
         amount: parseFloat(String(data.valorInvestido ?? data.valor ?? data.amount).replace(',', '.')) || 0,
         rendimento: parseFloat(String(data.rendimento ?? 0).replace(',', '.')) || 0,
-        date: data.data,
+        date: data.data || data.date,
         description: data.descricao || data.description,
         centro_id: data.centroId || 'default'
     };
@@ -361,6 +367,8 @@ function loadFromLocalStorage() {
             const centroValido = receita.centroId && appState.centrosFinanceiros.some(c => c.id === receita.centroId);
             return {
                 ...receita,
+                data: receita.data || receita.date,
+                descricao: receita.descricao || receita.description,
                 centroId: centroValido ? receita.centroId : defaultCentroId
             };
         });
@@ -369,6 +377,8 @@ function loadFromLocalStorage() {
             const centroValido = despesa.centroId && appState.centrosFinanceiros.some(c => c.id === despesa.centroId);
             return {
                 ...despesa,
+                data: despesa.data || despesa.date,
+                descricao: despesa.descricao || despesa.description,
                 centroId: centroValido ? despesa.centroId : defaultCentroId,
                 categoria: despesa.categoria || 'outros',
                 tipo: despesa.tipo || despesa.recorrencia || 'eventual',
@@ -380,6 +390,8 @@ function loadFromLocalStorage() {
             const centroValido = investimento.centroId && appState.centrosFinanceiros.some(c => c.id === investimento.centroId);
             return {
                 ...investimento,
+                data: investimento.data || investimento.date,
+                descricao: investimento.descricao || investimento.description,
                 centroId: centroValido ? investimento.centroId : defaultCentroId,
                 valorInvestido: investimento.valorInvestido ?? investimento.valor ?? 0,
                 rendimento: investimento.rendimento ?? 0,
@@ -1484,26 +1496,29 @@ function initializeForms() {
         e.preventDefault();
         
         const novaDespesa = {
-            id: Date.now(),
+            data: document.getElementById('gastoRapidoData').value,
             descricao: document.getElementById('gastoRapidoDescricao').value,
             centroId: document.getElementById('gastoRapidoCentro').value,
-            valor: parseFloat(document.getElementById('gastoRapidoValor').value),
             categoria: document.getElementById('gastoRapidoCategoria').value,
-            data: document.getElementById('gastoRapidoData').value,
+            valor: parseFloat(document.getElementById('gastoRapidoValor').value) || 0,
             tipo: 'eventual',
             natureza: 'variavel',
             recorrencia: 'nao-recorrente'
         };
-        
-        appState.despesas.push(novaDespesa);
-        saveToLocalStorage();
-        closeAllModals();
-        updateDashboard();
-        renderAllData();
-        checkBudgetAlert();
-        
-        // Mostrar feedback visual
-        showNotification('✅ Gasto registrado com sucesso!');
+
+        saveFinancialData('despesa', novaDespesa).then(() => {
+            return loadDataFromAPI();
+        }).then(() => {
+            closeAllModals();
+            document.getElementById('formGastoRapido').reset();
+            updateDashboard();
+            renderAllData();
+            checkBudgetAlert();
+            showNotification('✅ Gasto registrado com sucesso!');
+        }).catch(error => {
+            console.error('Erro ao salvar gasto rápido:', error);
+            alert('Erro ao salvar gasto rápido: ' + (error.message || 'Erro desconhecido'));
+        });
     });
     
     // Form Meta
@@ -2384,16 +2399,16 @@ function updateDespesasDetalhadasPorCategoria() {
     
     // Preencher com dados de despesas
     appState.despesas.forEach(d => {
-        const mes = d.data.substring(0, 7);
-        if (despesasPorMesCategoria[mes] && despesasPorMesCategoria[mes].hasOwnProperty(d.categoria)) {
+        const mes = (d && (d.data || d.date) || '').substring(0, 7);
+        if (mes && despesasPorMesCategoria[mes] && despesasPorMesCategoria[mes].hasOwnProperty(d.categoria)) {
             despesasPorMesCategoria[mes][d.categoria] += d.valor;
         }
     });
     
     // Preencher com dados de investimentos
     appState.investimentos.forEach(inv => {
-        const mes = inv.data.substring(0, 7);
-        if (despesasPorMesCategoria[mes]) {
+        const mes = (inv && (inv.data || inv.date) || '').substring(0, 7);
+        if (mes && despesasPorMesCategoria[mes]) {
             despesasPorMesCategoria[mes]['investimentos'] += inv.valorInvestido;
         }
     });
