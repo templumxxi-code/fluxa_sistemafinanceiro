@@ -2997,7 +2997,14 @@ function renderInvestimentos() {
     let totalInvestido = 0;
     let rendimentoTotal = 0;
     
-    investimentos.sort((a, b) => new Date(b.data) - new Date(a.data)).forEach(inv => {
+    investimentos.sort((a, b) => new Date(b.data || b.date) - new Date(a.data || a.date)).forEach(inv => {
+        // Proteção contra undefined
+        inv.tipo = inv.tipo || inv.category || 'outros';
+        inv.descricao = inv.descricao || inv.description || 'Sem descrição';
+        inv.data = inv.data || inv.date || new Date().toISOString().split('T')[0];
+        inv.valorInvestido = parseFloat(inv.valorInvestido || inv.amount || 0);
+        inv.rendimento = parseFloat(inv.rendimento || 0);
+        
         totalInvestido += inv.valorInvestido;
         rendimentoTotal += inv.rendimento;
         
@@ -3007,7 +3014,7 @@ function renderInvestimentos() {
         tr.innerHTML = `
             <td>${formatDate(inv.data)}</td>
             <td>${inv.descricao}</td>
-            <td>${capitalize((inv.tipo || 'outros').replace('_', ' '))}</td>
+            <td>${capitalize(inv.tipo.replace('_', ' '))}</td>
             <td>${formatCurrency(inv.valorInvestido)}</td>
             <td style="color: ${inv.rendimento >= 0 ? 'var(--success)' : 'var(--expense)'}; font-weight: 600;">
                 ${formatCurrency(inv.rendimento)}
