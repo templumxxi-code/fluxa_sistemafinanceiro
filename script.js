@@ -3007,7 +3007,7 @@ function renderInvestimentos() {
         tr.innerHTML = `
             <td>${formatDate(inv.data)}</td>
             <td>${inv.descricao}</td>
-            <td>${capitalize(inv.tipo.replace('_', ' '))}</td>
+            <td>${capitalize((inv.tipo || 'outros').replace('_', ' '))}</td>
             <td>${formatCurrency(inv.valorInvestido)}</td>
             <td style="color: ${inv.rendimento >= 0 ? 'var(--success)' : 'var(--expense)'}; font-weight: 600;">
                 ${formatCurrency(inv.rendimento)}
